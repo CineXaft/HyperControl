@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ <string name="module_name">HyperControl</string>
+ <string name="module_description">Native HyperOS Settings pages. Twelve grouped framework options, English and simplified Chinese ARSC resources, named icon/layout fallbacks. Framework changes require full reboot. Experimental; API 102 and compatible MIUIX Settings required. Not tested on other devices.</string>
+</resources>

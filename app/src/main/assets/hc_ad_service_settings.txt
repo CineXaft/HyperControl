@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="手机管家">
+        <Preference android:title="推荐广告"><intent android:targetPackage="com.miui.securitycenter" android:targetClass="com.miui.securityscan.ui.settings.SettingsPrivacyActivity"/></Preference>
+        <Preference android:title="应用广告"><intent android:targetPackage="com.miui.securitycenter" android:targetClass="com.miui.appmanager.AppManagerSettings"/></Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="应用商店">
+        <Preference android:title="福利广告"><intent android:targetPackage="com.xiaomi.market" android:targetClass="com.xiaomi.market.business_ui.settings.function.FunctionSettingsFragmentActivity"/></Preference>
+        <Preference android:title="服务广告"><intent android:targetPackage="com.xiaomi.market" android:targetClass="com.xiaomi.market.business_ui.settings.recommend.RecommendSettingsFragmentActivity"/></Preference>
+        <Preference android:title="通知广告"><intent android:targetPackage="com.xiaomi.market" android:targetClass="com.xiaomi.market.ui.NotificationSettingsActivity"/></Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="系统/系统app广告">
+        <Preference android:title="系统广告"><intent android:targetPackage="com.xiaomi.account" android:targetClass="com.xiaomi.account.settings.SystemAdActivity"/></Preference>
+        <Preference android:title="清理广告"><intent android:targetPackage="com.miui.cleanmaster" android:targetClass="com.miui.optimizecenter.settings.SettingsActivity"/></Preference>
+        <Preference android:title="下载广告"><intent android:targetPackage="com.android.providers.downloads.ui" android:targetClass="com.android.providers.downloads.ui.activity.InfoFlowSettingActivity"/></Preference>
+        <Preference android:title="日历广告"><intent android:targetPackage="com.android.calendar" android:targetClass="com.android.calendar.settings.UserExperienceActionBarActivity"/></Preference>
+        <Preference android:title="主题广告"><intent android:targetPackage="com.android.thememanager" android:targetClass="com.android.thememanager.activity.PrivacySettingsActivity"/></Preference>
+        <Preference android:title="钱包广告"><intent android:targetPackage="com.mipay.wallet" android:targetClass="com.mipay.wallet.app.settings.MiuiStyleSettingActivity"/></Preference>
+        <Preference android:title="社区广告"><intent android:targetPackage="com.xiaomi.vipaccount" android:targetClass="com.xiaomi.vipaccount.ui.setting.HighSettingsActivity"/></Preference>
+        <Preference android:title="营业厅广告"><intent android:targetPackage="com.android.contacts" android:targetClass="com.mobile.businesshall.ui.about.BhAboutActivity"/></Preference>
+        <Preference android:title="负一屏广告"><intent android:targetPackage="com.miui.personalassistant" android:targetClass="com.miui.personalassistant.settings.PASettingActivity"/></Preference>
+        <Preference android:title="包管理广告"><intent android:targetPackage="com.miui.packageinstaller" android:targetClass="com.android.packageinstaller.SettingsActivity"/></Preference>
+        <Preference android:title="浏览器广告"><intent android:targetPackage="com.android.browser" android:targetClass="com.android.browser.preferences.activity.CustomizationPreferenceActivity"/></Preference>
+        <Preference android:title="小米音乐广告"><intent android:targetPackage="com.miui.player" android:targetClass="com.miui.player.phone.ui.MusicSettings"/></Preference>
+        <Preference android:title="小爱同学广告"><intent android:targetPackage="com.miui.voiceassist" android:targetClass="com.xiaomi.voiceassistant.settings.PrivacySettingsActivity"/></Preference>
+        <Preference android:title="搜狗输入法广告"><intent android:targetPackage="com.sohu.inputmethod.sogou.xiaomi" android:targetClass="com.sohu.inputmethod.settings.activity.AdvertisementSettings"/></Preference>
+        <Preference android:title="小米视频服务"><intent android:targetPackage="com.miui.video" android:targetClass="com.miui.video.feature.mine.setting.DevelopSettingActivity"/></Preference>
+        <Preference android:title="小米有品广告"><intent android:targetPackage="com.xiaomi.youpin" android:targetClass="com.xiaomi.profile.model.setting.SettingActivity"/></Preference>
+        <Preference android:title="小米澎湃引擎广告"><intent android:targetPackage="com.xiaomi.aicr" android:targetClass="com.xiaomi.aicr.PrivacyManagerActivity"/></Preference>
+        <Preference android:title="小米视频广告"><intent android:targetPackage="com.miui.video" android:targetClass="com.miui.video.feature.mine.setting.SettingActivity"/></Preference>
+        <Preference android:title="全局搜索广告"><intent android:targetPackage="com.android.quicksearchbox" android:targetClass="com.android.quicksearchbox.preferences.SearchSettingsPreferenceActivity"/></Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

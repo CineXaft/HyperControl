@@ -1,0 +1,4 @@
+#!/bin/sh
+# Optional local ARM64 build-host wrapper for Google's x86_64 AAPT2.
+AAPT2_X86_64="${AAPT2_X86_64:-/workspace/hc148/android-sdk/build-tools/35.0.0/aapt2}"
+exec /usr/bin/qemu-x86_64 -L /usr/x86_64-linux-gnu "$AAPT2_X86_64" "$@"

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ <string name="module_name">HyperControl</string>
+ <string name="module_description">原生设置列表与原生滚动。系统框架整理为十二项，中英文 ARSC 资源，图标及布局按宿主名称适配回退。框架选项需整机重启。实验版本，需 API 102 和兼容 MIUIX 的小米设置，不代表全品牌或全部固件已适配。</string>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="拓展功能">
+        <Preference android:title="通知历史"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.notification.history.NotificationHistoryActivity"/></Preference>
+        <Preference android:title="极暗模式"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.Settings$ReduceBrightColorsSettingsActivity"/></Preference>
+        <Preference android:title="隐藏应用"><intent android:targetPackage="com.miui.securitycenter" android:targetClass="com.miui.privacyapps.ui.PrivacyAppsManageActivity"/></Preference>
+        <Preference android:title="所有应用" android:fragment="com.android.settings.applications.manageapplications.ManageApplications"/>
+        <Preference android:title="隐私选项"><intent android:action="android.settings.PRIVACY_SETTINGS"/></Preference>
+        <Preference android:title="高刷新率应用"><intent android:targetPackage="com.xiaomi.misettings" android:targetClass="com.xiaomi.misettings.display.RefreshRate.HighRefreshOptionsActivity"/></Preference>
+        <Preference android:title="设备诊断"><intent android:targetPackage="com.android.devicediagnostics" android:targetClass="com.android.devicediagnostics.MainActivity"/></Preference>
+        <Preference android:title="扬声器清理"><intent android:targetPackage="com.miui.misound" android:targetClass="com.miui.misound.cleanspeaker.CleanSpeakerActivity"/></Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Android原生功能">
+        <Preference android:title="内存占用"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.Settings$AppMemoryUsageActivity"/></Preference>
+        <Preference android:title="原生护眼" android:fragment="com.android.settings.display.NightDisplaySettings"/>
+        <Preference android:title="电池优化"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.Settings$AppBatteryUsageActivity"/></Preference>
+        <Preference android:title="文件管理"><intent android:targetPackage="com.google.android.documentsui" android:targetClass="com.android.documentsui.files.FilesActivity"/></Preference>
+        <Preference android:title="显示大小"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.Settings$TextReadingSettingsActivity"/></Preference>
+        <Preference android:title="定位服务"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.Settings$ScanningSettingsActivity"/></Preference>
+        <Preference android:title="使用情况统计数据"><intent android:targetPackage="com.android.settings" android:targetClass="com.android.settings.UsageStatsActivity"/></Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="彩蛋相关">
+        <Preference android:title="安卓彩蛋"><intent android:targetPackage="android" android:targetClass="com.android.internal.app.PlatLogoActivity"/></Preference>
+        <Preference android:title="画板"><intent android:targetPackage="com.android.egg" android:targetClass="com.android.egg.paint.PaintActivity"/></Preference>
+        <Preference android:title="方格"><intent android:targetPackage="com.android.egg" android:targetClass="com.android.egg.quares.QuaresActivity"/></Preference>
+        <Preference android:title="甜品盒"><intent android:targetPackage="com.android.systemui" android:targetClass="com.android.systemui.DessertCase"/></Preference>
+        <Preference android:title="宇宙飞船"><intent android:targetPackage="com.android.egg" android:targetClass="com.android.egg.landroid.MainActivity"/></Preference>
+    </PreferenceCategory>
+</PreferenceScreen>
