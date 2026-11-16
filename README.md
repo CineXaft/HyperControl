@@ -12,7 +12,12 @@ This is an Android Studio/Gradle project reconstructed from the APK supplied by 
 
 The application ID and Java namespace intentionally differ, matching the supplied APK.
 
-## Open in Android Studio
+## Current build status
+
+The project configuration and Java source tree are in place. On the ARM64 Linux environment used for recovery, Gradle configuration and resource processing start successfully, but the full Android Gradle build is not yet green: AGP's AAPT2 daemon expects a native executable, while the downloaded Google build-tools AAPT2 is x86_64 and must be run through QEMU. The project includes the SDK/build-tool setup and wrapper notes for continuing on an x86_64 development host or after configuring a native/transparent AAPT2 toolchain. This is an environment/toolchain limitation, not evidence that the recovered Java is equivalent to the original source.
+
+The recovered project should therefore be treated as **Android Studio-readable and GitHub-ready**, not as a verified release-buildable replacement yet.
+
 
 1. Open this folder as a Gradle project.
 2. Use JDK 17 or newer and install Android SDK Platform 35 (or the platform required by the build).
