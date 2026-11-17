@@ -1,37 +1,32 @@
-# HyperControl — R8 keep rules
+# HyperControl - R8 configuration
 #
-# The module is injected into other processes, so several classes are looked up by NAME at
-# runtime (LSPosed entry point, Settings fragment host, dynamic class loader, Class.forName).
-# Renaming them silently breaks the module, so they must keep their original names.
+# NOTE: R8 exposes -adaptclassstrings, but it does NOT rewrite the module's own class-name
+# literals here (verified: after enabling it the literals stayed unchanged while the classes were
+# renamed, which would break loadClass at runtime). Those two classes are therefore pinned by name
+# instead. Everything else is obfuscated.
 
-# LSPosed entry point (META-INF/xposed/java_init.list looks this name up)
--keep class dev.local.hypercontrol.Entry { *; }
+# Settings resolves this fragment through a name string and Hook.loadFragmentClass() returns the
+# class object, so the literal "com.cinexaft.hypercontrol.ui.NativeScreen" must stay resolvable.
+-keep class com.cinexaft.hypercontrol.ui.NativeScreen { *; }
 
-# Instantiated by the Settings framework from a ":settings:show_fragment" string
--keep class dev.local.hypercontrol.ui.NativeScreen { *; }
+# Loaded through ClassLoader.loadClass("com.cinexaft.hypercontrol.ui.PageBridge").
+-keep class com.cinexaft.hypercontrol.ui.PageBridge { *; }
 
-# Loaded with Class.forName/loadClass and invoked reflectively (method "show")
--keep class dev.local.hypercontrol.ui.PageBridge { *; }
+# LSPosed reads the entry class name from META-INF/xposed/java_init.list, a resource file that
+# R8 cannot rewrite. This one name must survive obfuscation.
+-keep class com.cinexaft.hypercontrol.Entry { *; }
 
-# Verified by name in Engine.verifyLinkedClasses()
--keep class dev.local.hypercontrol.core.R { *; }
--keep class dev.local.hypercontrol.core.Config { *; }
--keep class dev.local.hypercontrol.core.Audit { *; }
--keep class dev.local.hypercontrol.core.Boot { *; }
--keep class dev.local.hypercontrol.core.NHook { *; }
--keep class dev.local.hypercontrol.core.Shared { *; }
--keep class dev.local.hypercontrol.core.Recovery { *; }
+# Components referenced from AndroidManifest.xml. The manifest is binary XML produced by AAPT2
+# and is not rewritten by R8, so these names must also survive.
+-keep class com.cinexaft.hypercontrol.RestartProvider { *; }
+-keep class com.cinexaft.hypercontrol.flasher.KernelProvider { *; }
+-keep class com.cinexaft.hypercontrol.flasher.FlashService { *; }
 
-# Declared in AndroidManifest.xml (AGP normally keeps these; explicit for clarity)
--keep class dev.local.hypercontrol.RestartProvider { *; }
--keep class dev.local.hypercontrol.flasher.KernelProvider { *; }
--keep class dev.local.hypercontrol.flasher.FlashService { *; }
-
-# XposedInterface$Hooker is a *library* type from the LSPosed API, so R8 cannot rename the
-# interface method. Keep the implementing member name, but allow the class itself to be renamed.
+# XposedInterface$Hooker is a *library* interface, so R8 already cannot rename intercept().
+# Stating it explicitly documents the contract and guards against a future API change.
 -keepclassmembers class * implements io.github.libxposed.api.XposedInterface$Hooker {
     java.lang.Object intercept(io.github.libxposed.api.XposedInterface$Chain);
 }
 
-# Keep annotations/enclosing info that LSPosed uses when reporting hook errors.
+# LSPosed uses annotations/enclosing metadata when reporting hook failures.
 -keepattributes *Annotation*, InnerClasses, EnclosingMethod, Signature

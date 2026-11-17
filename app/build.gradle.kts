@@ -1,7 +1,7 @@
 plugins { id("com.android.application") }
 
 android {
-    namespace = "dev.local.hypercontrol"
+    namespace = "com.cinexaft.hypercontrol"
     compileSdk = 35
 
     defaultConfig {

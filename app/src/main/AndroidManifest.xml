@@ -17,10 +17,10 @@
         <package android:name="com.google.android.gms"/>
     </queries>
     <application android:allowBackup="false" android:hasCode="true" android:label="HyperControl">
-        <provider android:authorities="com.cinexaft.hypercontrol.flasher" android:exported="true" android:grantUriPermissions="false" android:name="dev.local.hypercontrol.flasher.KernelProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS" android:process=":flasher"/>
-        <service android:exported="false" android:foregroundServiceType="specialUse" android:name="dev.local.hypercontrol.flasher.FlashService" android:process=":flasher">
+        <provider android:authorities="com.cinexaft.hypercontrol.flasher" android:exported="true" android:grantUriPermissions="false" android:name="com.cinexaft.hypercontrol.flasher.KernelProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS" android:process=":flasher"/>
+        <service android:exported="false" android:foregroundServiceType="specialUse" android:name="com.cinexaft.hypercontrol.flasher.FlashService" android:process=":flasher">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-confirmed AnyKernel ZIP installation using root; must complete without interruption"/>
         </service>
-        <provider android:authorities="com.cinexaft.hypercontrol.restart" android:exported="true" android:grantUriPermissions="false" android:name="dev.local.hypercontrol.RestartProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS"/>
+        <provider android:authorities="com.cinexaft.hypercontrol.restart" android:exported="true" android:grantUriPermissions="false" android:name="com.cinexaft.hypercontrol.RestartProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS"/>
     </application>
 </manifest>

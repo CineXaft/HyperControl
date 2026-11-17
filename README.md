@@ -4,13 +4,16 @@ This is an Android Studio/Gradle project reconstructed from the APK supplied by 
 
 ## Identity and version
 
-- APK application ID: `com.cinexaft.hypercontrol`
-- Java namespace and Xposed entry: `dev.local.hypercontrol.Entry`
+- Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
+- LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
 - APK version: `1.4.8`, versionCode `10408`
 - Source APK SHA-256: recorded in [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
 
-The application ID and Java namespace intentionally differ, matching the supplied APK.
+The supplied 1.4.8 APK shipped its Java code under `dev.local.hypercontrol` while its application
+ID was already `com.cinexaft.hypercontrol`. This reconstruction unifies both on
+`com.cinexaft.hypercontrol`, including the manifest component names, the Xposed entry point and
+the resource package that `Strings.get()` resolves by name.
 
 ## Current build status
 
@@ -64,18 +67,25 @@ because every UI string is resolved at runtime through
 `Resources.getIdentifier(name, "string", "dev.local.hypercontrol")`. Verified after the build:
 all 100 default and 98 `zh` string names still exist, with none missing and none extra.
 
-R8 renames most classes (`a.a`, `b.c`, ...) but these names are load-bearing and pinned in
-`app/proguard-rules.pro`:
+R8 renames 37 of the 43 remaining classes (`a.a`, `b.c`, ...). Six keep their original names
+because the name itself is the contract, and none of those can be rewritten by R8:
 
-- `dev.local.hypercontrol.Entry` — looked up by name from `META-INF/xposed/java_init.list`.
-- `dev.local.hypercontrol.ui.NativeScreen` and `ui.PageBridge` — instantiated/loaded from string
-  literals (`":settings:show_fragment"`, `Class.forName`).
-- `dev.local.hypercontrol.core.{R,Config,Audit,Boot,NHook,Shared,Recovery}` — verified by name in
-  `Engine.verifyLinkedClasses()`.
-- Manifest components (`RestartProvider`, flasher `KernelProvider`/`FlashService`).
-- The `intercept(...)` member of every `XposedInterface.Hooker`: the interface comes from the
-  LSPosed API as a *library* type, so its method reference cannot be rewritten. The classes
-  themselves are still renamed.
+| kept name | why |
+|---|---|
+| `...hypercontrol.Entry` | listed in `META-INF/xposed/java_init.list`, a resource file R8 cannot edit |
+| `...ui.NativeScreen` | passed to Settings as a fragment-name string; `Hook` compares and resolves it |
+| `...ui.PageBridge` | loaded via `ClassLoader.loadClass("...ui.PageBridge")` |
+| `...RestartProvider` | declared in `AndroidManifest.xml` |
+| `...flasher.KernelProvider` | declared in `AndroidManifest.xml` |
+| `...flasher.FlashService` | declared in `AndroidManifest.xml` |
+
+`-adaptclassstrings` was tried and rejected: R8 left the class-name literals untouched while still
+renaming the classes, which would have made `loadClass` fail at runtime. The rules file documents
+that finding.
+
+`core.*` no longer needs pinning because it is no longer looked up by name — the old
+`Engine.verifyLinkedClasses()` built class names by string concatenation, which no obfuscator can
+follow; it now iterates real `Class` objects, so R8 can rename them.
 
 ## Signing
 
