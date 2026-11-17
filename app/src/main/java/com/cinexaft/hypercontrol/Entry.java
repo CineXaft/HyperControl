@@ -6,7 +6,6 @@ import com.cinexaft.hypercontrol.core.Engine;
 import com.cinexaft.hypercontrol.passkey.Installer;
 import com.cinexaft.hypercontrol.passkey.Policy;
 import com.cinexaft.hypercontrol.secure.FlagSecure;
-import com.cinexaft.hypercontrol.securitycenter.SecurityCenter;
 import io.github.libxposed.api.XposedModule;
 import io.github.libxposed.api.XposedModuleInterface;
 import java.util.List;
@@ -23,9 +22,6 @@ public final class Entry extends XposedModule {
         ClassLoader defaultClassLoader = packageLoadedParam.getDefaultClassLoader();
         if (!"com.android.settings".equals(packageName)) {
             try {
-                if ("com.miui.securitycenter".equals(packageName)) {
-                    SecurityCenter.install(defaultClassLoader);
-                }
                 Runtime.install(packageName, defaultClassLoader);
                 return;
             } catch (Throwable th) {

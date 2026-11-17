@@ -90,12 +90,4 @@
     <string name="hc_kernel_running">刷写中 · 请勿重启或强停 HyperControl</string>
     <string name="hc_kernel_done">刷写脚本返回成功，可自行确认后重启。</string>
     <string name="hc_kernel_error">任务失败 · 查看日志，不自动重试或重启。</string>
-    <string name="hc_securitycenter">手机管家功能</string>
-    <string name="hc_sec_title">手机管家</string>
-    <string name="hc_sec_score">安全扫描扣分归零</string>
-    <string name="hc_sec_score_desc">预测扣分归零，重启手机管家生效。</string>
-    <string name="hc_sec_intercept">关闭权限拦截页限制</string>
-    <string name="hc_sec_intercept_desc">关闭权限拦截，重启手机管家生效。</string>
-    <string name="hc_sec_adb">跳过 ADB 安装验证</string>
-    <string name="hc_sec_adb_desc">跳过 ADB 安装验证，重启手机管家生效。</string>
 </resources>

@@ -1,29 +1,37 @@
 package com.cinexaft.hypercontrol.core;
 
 import android.util.Log;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /* JADX INFO: loaded from: classes.dex */
 public final class Audit {
-    private static final int[] hits = new int[10];
 
-    public static void error(String str, Throwable th) {
-        Log.e("HyperControl.Core", str, th);
+    /**
+     * Hit counters.
+     *
+     * <p>These used to be a plain {@code int[]} behind a {@code synchronized} method, which meant
+     * every single interception took a global monitor. The hooks that count hits run inside
+     * PackageManagerService, so that lock was the most contended thing in the module. A
+     * lock-free array keeps the same "log on powers of two" behaviour without the monitor.
+     */
+    private static final AtomicIntegerArray hits = new AtomicIntegerArray(10);
+
+    public static void error(String message, Throwable error) {
+        Log.e("HyperControl.Core", message, error);
     }
 
-    public static synchronized void hit(int i, String str) {
-        int[] iArr = hits;
-        int i2 = iArr[i] + 1;
-        iArr[i] = i2;
-        if (((i2 - 1) & i2) == 0) {
-            note("HIT " + Config.name(i) + " #" + i2 + " " + str);
+    public static void hit(int feature, String label) {
+        int count = hits.incrementAndGet(feature);
+        if (((count - 1) & count) == 0) {
+            note("HIT " + Config.name(feature) + " #" + count + " " + label);
         }
     }
 
-    public static void hooked(int i, String str) {
-        note("HOOK ".concat(str));
+    public static void hooked(int feature, String label) {
+        note("HOOK ".concat(label));
     }
 
-    public static void note(String str) {
-        Log.i("HyperControl.Core", str);
+    public static void note(String message) {
+        Log.i("HyperControl.Core", message);
     }
 }

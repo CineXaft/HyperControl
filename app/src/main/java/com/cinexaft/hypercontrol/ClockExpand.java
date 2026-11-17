@@ -4,11 +4,26 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.Log;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /* JADX INFO: loaded from: classes.dex */
 public final class ClockExpand {
+    private static final String TAG = "HyperControl.Clock";
+
+    /** Caller sites that must be deoptimized so the clock animator takes the hooks below. */
+    private static final String[] DEOPT = {
+        "com.android.keyguard.panel.KeyguardPanelViewController#access$updateNotificationState",
+        "com.android.keyguard.clock.KeyguardClockContainer#doAnimationToAod",
+        "com.android.keyguard.clock.animation.AnimationHelper$1#update",
+        "com.android.keyguard.interactor.KeyguardClockNotifInteractor$collectNotificationYSource$1$invokeSuspend$$inlined$map$1$2#emit",
+        "com.android.keyguard.interactor.KeyguardClockNotifInteractor#setNotifY",
+        "com.android.keyguard.interactor.KeyguardClockNotifInteractor#orientationChange",
+        "com.android.keyguard.panel.KeyguardPanelViewController$onLockScreenInfoChange$1#run",
+        "com.android.keyguard.panel.KeyguardPanelViewController$2$1#emit",
+        "com.android.keyguard.panel.KeyguardPanelViewController$statusBarStateControllerCallback$1#onStateChanged",
+    };
+
     public static Field fClockView;
     public static Field fContainerNotif;
     public static Field fContext;
@@ -22,28 +37,25 @@ public final class ClockExpand {
     private static boolean installed;
     private static Method mHeight;
 
-    private static void d(ClassLoader classLoader, String str, String str2) {
+    private static void deoptCaller(ClassLoader classLoader, String spec) {
         try {
-            for (Method method : classLoader.loadClass(str).getDeclaredMethods()) {
-                if (str2.equals(method.getName())) {
+            int split = spec.indexOf('#');
+            Class<?> owner = classLoader.loadClass(spec.substring(0, split));
+            String name = spec.substring(split + 1);
+            for (Method method : owner.getDeclaredMethods()) {
+                if (name.equals(method.getName())) {
                     Entry.module.deoptimize(method);
                 }
             }
-        } catch (Throwable th) {
-            Reflect.log(th);
+        } catch (Throwable error) {
+            Reflect.log(error);
         }
     }
 
-    private static Field f(Class cls, String str) throws NoSuchFieldException {
-        Field declaredField = cls.getDeclaredField(str);
+    private static Field field(Class<?> owner, String name) throws NoSuchFieldException {
+        Field declaredField = owner.getDeclaredField(name);
         declaredField.setAccessible(true);
         return declaredField;
-    }
-
-    private static void h(Method method, int i) {
-        Entry.module.deoptimize(method);
-        Reflect.hook(method, new ClockHook(i));
-        Log.i("HyperControl.Clock", method.toString());
     }
 
     public static synchronized void install(ClassLoader classLoader) {
@@ -52,59 +64,51 @@ public final class ClockExpand {
         }
         if (Platform.clockUnsupported()) {
             installed = true;
-            Log.i("HyperControl.Clock", "clock feature disabled on HyperOS 2/3");
+            Log.i(TAG, "clock feature disabled on HyperOS 2/3");
             return;
         }
-        Log.i("HyperControl.Clock", "install called");
+        Log.i(TAG, "install called");
         installed = true;
         try {
-            Class<?> clsLoadClass = classLoader.loadClass("com.android.keyguard.clock.animation.AnimationHelper");
-            Class<?> clsLoadClass2 = classLoader.loadClass("com.android.keyguard.panel.KeyguardPanelViewController");
-            Class<?> clsLoadClass3 = classLoader.loadClass("com.android.keyguard.injector.KeyguardClockInjector");
-            Class<?> clsLoadClass4 = classLoader.loadClass("com.android.keyguard.clock.KeyguardClockContainer");
-            Class<?> clsLoadClass5 = classLoader.loadClass("com.android.keyguard.interactor.KeyguardClockNotifInteractor");
-            Class<?> clsLoadClass6 = classLoader.loadClass("com.android.keyguard.dfx.clockstyle.KeyguardStyleConsistencyMonitor");
-            fHasNotif = f(clsLoadClass, "mHasNotification");
-            fInjector = f(clsLoadClass2, "keyguardClockInjector");
-            fClockView = f(clsLoadClass3, "keyguardClockView");
-            fContainerNotif = f(clsLoadClass4, "mHasNotification");
-            fMonitor = f(clsLoadClass2, "keyguardStyleConsistencyMonitor");
-            fMonitorNotif = f(clsLoadClass6, "hasNotification");
-            fRawY = f(clsLoadClass5, "rawNotifY");
-            fEditRect = f(clsLoadClass5, "maxEditRect");
-            fMargin = f(clsLoadClass5, "clockNotificationMargin");
-            fContext = f(clsLoadClass5, "context");
-            Method declaredMethod = classLoader.loadClass("com.miui.utils.configs.MiuiConfigs").getDeclaredMethod("getScreenHeight", Context.class);
-            declaredMethod.setAccessible(true);
-            mHeight = declaredMethod;
-            h(m(clsLoadClass, "doAnimationToNotification", 2), 0);
-            h(m(clsLoadClass, "doAnimationToAod", 5), 1);
-            h(m(clsLoadClass2, "access$updateNotificationState", 2), 2);
-            h(m(clsLoadClass5, "access$correctYValue", 2), 3);
-            h(m(clsLoadClass5, "updateNotifYParam", 1), 4);
-            d(classLoader, "com.android.keyguard.panel.KeyguardPanelViewController", "access$updateNotificationState");
-            d(classLoader, "com.android.keyguard.clock.KeyguardClockContainer", "doAnimationToAod");
-            d(classLoader, "com.android.keyguard.clock.animation.AnimationHelper$1", "update");
-            d(classLoader, "com.android.keyguard.interactor.KeyguardClockNotifInteractor$collectNotificationYSource$1$invokeSuspend$$inlined$map$1$2", "emit");
-            d(classLoader, "com.android.keyguard.interactor.KeyguardClockNotifInteractor", "setNotifY");
-            d(classLoader, "com.android.keyguard.interactor.KeyguardClockNotifInteractor", "orientationChange");
-            d(classLoader, "com.android.keyguard.panel.KeyguardPanelViewController$onLockScreenInfoChange$1", "run");
-            d(classLoader, "com.android.keyguard.panel.KeyguardPanelViewController$2$1", "emit");
-            d(classLoader, "com.android.keyguard.panel.KeyguardPanelViewController$statusBarStateControllerCallback$1", "onStateChanged");
-        } catch (Throwable th) {
+            Class<?> animationHelper = classLoader.loadClass("com.android.keyguard.clock.animation.AnimationHelper");
+            Class<?> panel = classLoader.loadClass("com.android.keyguard.panel.KeyguardPanelViewController");
+            Class<?> injector = classLoader.loadClass("com.android.keyguard.injector.KeyguardClockInjector");
+            Class<?> container = classLoader.loadClass("com.android.keyguard.clock.KeyguardClockContainer");
+            Class<?> notifInteractor = classLoader.loadClass("com.android.keyguard.interactor.KeyguardClockNotifInteractor");
+            Class<?> consistency = classLoader.loadClass("com.android.keyguard.dfx.clockstyle.KeyguardStyleConsistencyMonitor");
+            fHasNotif = field(animationHelper, "mHasNotification");
+            fInjector = field(panel, "keyguardClockInjector");
+            fClockView = field(injector, "keyguardClockView");
+            fContainerNotif = field(container, "mHasNotification");
+            fMonitor = field(panel, "keyguardStyleConsistencyMonitor");
+            fMonitorNotif = field(consistency, "hasNotification");
+            fRawY = field(notifInteractor, "rawNotifY");
+            fEditRect = field(notifInteractor, "maxEditRect");
+            fMargin = field(notifInteractor, "clockNotificationMargin");
+            fContext = field(notifInteractor, "context");
+            Method height = classLoader.loadClass("com.miui.utils.configs.MiuiConfigs").getDeclaredMethod("getScreenHeight", Context.class);
+            height.setAccessible(true);
+            mHeight = height;
+            hook(animationHelper, "doAnimationToNotification", 2, 0);
+            hook(animationHelper, "doAnimationToAod", 5, 1);
+            hook(panel, "access$updateNotificationState", 2, 2);
+            hook(notifInteractor, "access$correctYValue", 2, 3);
+            hook(notifInteractor, "updateNotifYParam", 1, 4);
+            for (String spec : DEOPT) {
+                deoptCaller(classLoader, spec);
+            }
+        } catch (Throwable error) {
             installed = false;
-            Reflect.log(th);
+            Reflect.log(error);
         }
     }
 
-    private static Method m(Class cls, String str, int i) throws NoSuchMethodException {
-        for (Method method : cls.getDeclaredMethods()) {
-            if (str.equals(method.getName()) && method.getParameterTypes().length == i) {
-                method.setAccessible(true);
-                return method;
-            }
+    private static void hook(Class<?> owner, String name, int count, int kind) throws NoSuchMethodException {
+        Method method = Hooks.byNameCount(owner, name, count);
+        if (method == null) {
+            throw new NoSuchMethodException(name);
         }
-        throw new NoSuchMethodException(str);
+        Hooks.install(method, new ClockHook(kind), TAG);
     }
 
     public static Float noNotifY(Object obj) throws IllegalAccessException, InvocationTargetException {

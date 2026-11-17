@@ -13,14 +13,6 @@ import com.cinexaft.hypercontrol.State;
 
 /* JADX INFO: loaded from: classes.dex */
 public final class Catalog {
-    private static String safeLabel(Context context, String packageName) {
-        try {
-            return RestartTarget.label(context, packageName);
-        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
-            return packageName;
-        }
-    }
-
     public static void feature(Context context, PreferenceGroup preferenceGroup, int i, String str, String str2) {
         option(context, preferenceGroup, State.key(i), str, str2);
     }
@@ -34,7 +26,6 @@ public final class Catalog {
             row(context, preferenceCategory, "com.miui.powerkeeper", "电量和性能");
             row(context, preferenceCategory, "com.android.htmlviewer", "HTML 查看器");
             row(context, preferenceCategory, "com.android.providers.downloads", "下载管理");
-            row(context, preferenceCategory, "com.miui.securitycenter", safeLabel(context, "com.miui.securitycenter"));
             row(context, preferenceCategory, "hc.other", "其他");
             return;
         }
@@ -51,10 +42,6 @@ public final class Catalog {
             preference.setIconSpaceReserved(false);
             preference.setIntent(new Intent().setClassName("com.google.android.gms", "com.google.android.gms.app.settings.GoogleSettingsLink").setAction("android.intent.action.VIEW"));
             preferenceCategory.addPreference(preference);
-            return;
-        }
-        if ("com.miui.securitycenter".equals(str)) {
-            SecurityCenterPage.fill(context, preferenceScreen);
             return;
         }
         if ("com.android.systemui".equals(str)) {

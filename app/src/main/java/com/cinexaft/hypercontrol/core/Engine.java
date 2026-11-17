@@ -12,6 +12,14 @@ public final class Engine {
     private static boolean installed;
     public static ClassLoader loader;
     public static final ThreadLocal origin = new ThreadLocal();
+    /**
+     * Non-zero while any thread is inside Shared.capable().
+     *
+     * <p>NHook needs a re-entrancy check on every interception. Reading a plain int avoids the
+     * ThreadLocal lookup entirely in the normal case (nobody guarding), which is the common path
+     * for PackageManagerService hooks.
+     */
+    public static volatile int guarding;
     public static final ThreadLocal keyContext = new ThreadLocal();
 
     private static void attach(Executable executable, int i, int i2, String str) {

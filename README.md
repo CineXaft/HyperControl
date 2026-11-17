@@ -42,6 +42,40 @@ The APK metadata specifies target SDK 37 while the initial project compile SDK i
 
 `device-stubs` provides compile-only stand-ins for private Android/MIUI classes (SettingsPreferenceFragment, MIUI SettingsLib preferences, hidden framework APIs and MIUI AlertDialog). These are only for editor/compiler resolution. The real OS supplies those classes on the supported Xiaomi/Redmi ROMs. **Never package or ship the stubs as runtime code.**
 
+## What this build changed
+
+1.4.9 drops the Security Center feature. Its three hooks (score zeroing, permission-interception
+bypass, ADB-verify bypass) depended on private Security Center internals that change between
+releases, and could not be kept working across versions, so the whole `securitycenter` package,
+its settings page and its strings are gone. `com.miui.securitycenter` stays in `scope.list` only
+because the passkey feature still needs `Settings.Secure` writes from that process.
+
+Also removed as dead weight:
+
+- `core.R` carried 100 hard-coded resource id constants copied out of the resource table; nothing
+  referenced them (the flasher uses `android.R`), so the whole inner class is gone.
+- The Security Center strings, their `public.xml` ids, and the catalog row/route that opened them.
+
+Shared plumbing now lives in `Hooks`:
+
+| helper | replaces |
+|---|---|
+| `byNameCount(Class, name, count)` | `ClockExpand.m()`, per-class ad-hoc lookup loops |
+| `bySignature(loader, class, name, params, returnType)` | `Runtime.hook()`'s load/lookup/verify block |
+| `install(method, hooker[, tag])` | `ClockExpand.h()` and repeated deopt+hook+log triples |
+| `replaceArg(args, index, value)` | hand-built `new Object[]{...}` arrays in `ClockHook` (one of which hard-coded `new Object[5]`) |
+
+Hook overhead work in the hot paths:
+
+- `Audit.hit()` was `synchronized`, so every interception inside PackageManagerService took a
+  global monitor. It now uses `AtomicIntegerArray` and keeps the same power-of-two logging.
+- `NHook.intercept()` no longer reads a `ThreadLocal` on every call. `Engine.guarding` is a plain
+  volatile int that is zero unless some thread is inside `Shared.capable()`, so the common path is
+  one int compare. The ThreadLocal is still consulted when the counter is non-zero, so the
+  re-entrancy semantics are unchanged.
+- `Runtime.install()`'s five-way boolean OR chain became a `handled()` predicate plus a switch;
+  a signature mismatch now skips one hook with a warning instead of aborting the rest.
+
 ## Dex layout, R8 and compression
 
 Two different things were behind the earlier "six dex" and "128 KB":

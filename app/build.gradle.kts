@@ -9,8 +9,8 @@ android {
         minSdk = 35
         // The original APK metadata reports target 37; keep it and use a matching SDK for releases.
         targetSdk = 37
-        versionCode = 10408
-        versionName = "1.4.8"
+        versionCode = 10409
+        versionName = "1.4.9"
     }
 
     buildTypes {

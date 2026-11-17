@@ -92,12 +92,4 @@
     <string name="hc_kernel_running">Flashing · do not reboot or force-stop HyperControl</string>
     <string name="hc_kernel_done">Updater exited successfully. Reboot manually when ready.</string>
     <string name="hc_kernel_error">Task failed · see output. No automatic retry or reboot.</string>
-    <string name="hc_securitycenter">Security Center</string>
-    <string name="hc_sec_title">Security Center</string>
-    <string name="hc_sec_score">Zero predicted deduction</string>
-    <string name="hc_sec_score_desc">Zero predicted deductions; restart to apply.</string>
-    <string name="hc_sec_intercept">Disable permission interception</string>
-    <string name="hc_sec_intercept_desc">Disable permission interception; restart to apply.</string>
-    <string name="hc_sec_adb">Skip ADB install verification</string>
-    <string name="hc_sec_adb_desc">Skip ADB verification; restart to apply.</string>
 </resources>

@@ -28,7 +28,10 @@ public final class NHook implements XposedInterface.Hooker {
     }
 
     public Object intercept(XposedInterface.Chain chain) throws Throwable {
-        if (this.disabled || Boolean.TRUE.equals(Engine.origin.get())) {
+        if (this.disabled) {
+            return chain.proceed();
+        }
+        if (Engine.guarding != 0 && Boolean.TRUE.equals(Engine.origin.get())) {
             return chain.proceed();
         }
         int i = this.kind;

@@ -92,12 +92,4 @@
     <public type="string" name="hc_kernel_running" id="0x7f010084" />
     <public type="string" name="hc_kernel_done" id="0x7f010085" />
     <public type="string" name="hc_kernel_error" id="0x7f010086" />
-    <public type="string" name="hc_securitycenter" id="0x7f010087" />
-    <public type="string" name="hc_sec_title" id="0x7f010088" />
-    <public type="string" name="hc_sec_score" id="0x7f010089" />
-    <public type="string" name="hc_sec_score_desc" id="0x7f01008a" />
-    <public type="string" name="hc_sec_intercept" id="0x7f01008b" />
-    <public type="string" name="hc_sec_intercept_desc" id="0x7f01008c" />
-    <public type="string" name="hc_sec_adb" id="0x7f01008d" />
-    <public type="string" name="hc_sec_adb_desc" id="0x7f01008e" />
 </resources>

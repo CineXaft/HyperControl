@@ -13,13 +13,15 @@ public final class Shared {
     private static boolean policySaved;
 
     private static boolean capable(Object obj, Object obj2) {
-        ThreadLocal threadLocal = Engine.origin;
-        Object obj3 = threadLocal.get();
-        threadLocal.set(Boolean.TRUE);
+        ThreadLocal<Object> previous = Engine.origin;
+        Object saved = previous.get();
+        previous.set(Boolean.TRUE);
+        Engine.guarding++;
         try {
             return ((Boolean) R.call(obj, "checkCapability", new Object[]{obj2, 0})).booleanValue();
         } finally {
-            threadLocal.set(obj3);
+            Engine.guarding--;
+            previous.set(saved);
         }
     }
 
