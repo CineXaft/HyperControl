@@ -16,11 +16,21 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            isShrinkResources = false // strings are resolved dynamically by name
+            // Strings are resolved by name at runtime; res/raw/keep.xml protects them.
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             isMinifyEnabled = false
+        }
+    }
+
+    packaging {
+        // The original module ships classes.dex deflated. AGP 8 stores it uncompressed by default,
+        // which bloats the APK; restore the original legacy layout. resources.arsc must stay
+        // uncompressed for Android 11+ (API 30) and is left Stored by AAPT2.
+        dex {
+            useLegacyPackaging = true
         }
     }
 

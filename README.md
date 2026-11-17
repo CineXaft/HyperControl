@@ -39,25 +39,32 @@ The APK metadata specifies target SDK 37 while the initial project compile SDK i
 
 `device-stubs` provides compile-only stand-ins for private Android/MIUI classes (SettingsPreferenceFragment, MIUI SettingsLib preferences, hidden framework APIs and MIUI AlertDialog). These are only for editor/compiler resolution. The real OS supplies those classes on the supported Xiaomi/Redmi ROMs. **Never package or ship the stubs as runtime code.**
 
-## Dex layout and R8
+## Dex layout, R8 and compression
 
-`assembleDebug` produces **six** `classes*.dex` files. That is normal AGP behaviour, not a
-packaging bug: without minification the project classes are dexed in incremental buckets and the
-debug pipeline keeps the buckets separate (`classes.dex`, `classes2.dex`, ...) so rebuilds stay
-fast. The total is still only ~150 KB.
+Two different things were behind the earlier "six dex" and "128 KB":
 
-`assembleRelease` runs R8 (`isMinifyEnabled = true`) and emits a **single** `classes.dex`:
+1. **Dex count.** `assembleDebug` dexes project classes in incremental buckets, so it emits six
+   `classes*.dex` files. `assembleRelease` runs R8 and emits exactly **one** `classes.dex`.
+2. **Dex compression.** AGP 8 stores `classes.dex` uncompressed (fast install, bigger file). The
+   original module shipped it deflated, so `packaging { dex { useLegacyPackaging = true } }` is set
+   here to match. `resources.arsc` stays `Stored` — Android 11+ (API 30) requires it uncompressed
+   and 4-byte aligned.
 
-| build | dex files | APK |
-|---|---|---|
-| `assembleDebug` (no R8) | 6 | 178 KB, debug-signed |
-| `assembleRelease` (R8) | 1 | 117 KB, unsigned |
+Measured on this project:
 
-`isShrinkResources` is deliberately `false`: every UI string is looked up at runtime with
-`Resources.getIdentifier(name, "string", "dev.local.hypercontrol")`, so resource shrinking would
-delete strings the module still asks for by name.
+| build | dex files | classes.dex in APK | APK |
+|---|---|---|---|
+| `assembleDebug` | 6 | stored | 178 KB, debug-signed |
+| `assembleRelease` before compression | 1 | 91,376 B stored | 119,291 B |
+| `assembleRelease` final (R8 + deflated dex) | 1 | 43,369 B deflated | 71,283 B → **79,032 B signed** |
+| supplied original APK | 1 | 40,615 B deflated | 74,748 B |
 
-R8 renames most classes (`a.a`, `b.c`, ...), but a few names are load-bearing and are pinned in
+`isShrinkResources = true` is enabled, and `app/src/main/res/raw/keep.xml` keeps `@string/*`
+because every UI string is resolved at runtime through
+`Resources.getIdentifier(name, "string", "dev.local.hypercontrol")`. Verified after the build:
+all 100 default and 98 `zh` string names still exist, with none missing and none extra.
+
+R8 renames most classes (`a.a`, `b.c`, ...) but these names are load-bearing and pinned in
 `app/proguard-rules.pro`:
 
 - `dev.local.hypercontrol.Entry` — looked up by name from `META-INF/xposed/java_init.list`.
@@ -70,8 +77,19 @@ R8 renames most classes (`a.a`, `b.c`, ...), but a few names are load-bearing an
   LSPosed API as a *library* type, so its method reference cannot be rewritten. The classes
   themselves are still renamed.
 
-The release APK is unsigned. Sign it with your own key; it can never be a signature-compatible
-update for the published module unless the original key is used.
+## Signing
+
+Release output is unsigned. The supplied APK is signed with the public AOSP test key
+(`SHA-256 a40da80a59d170caa950cf15c18c454d47a39b26989d8b640ecd745ba71bf5dc`), so a rebuild can be
+signed with the same key and still be signature-compatible:
+
+```bash
+apksigner sign --key testkey.pk8 --cert testkey.x509.pem \
+  --out HyperControl_1.4.8-signed.apk app-release-unsigned.apk
+```
+
+The resulting APK verifies with APK Signature Scheme v3 (the original is v3-only as well, since
+minSdk is 35). Its certificate digest matches the supplied APK.
 
 ## Recovery fidelity
 
