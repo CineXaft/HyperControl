@@ -1,4 +1,4 @@
-# HyperControl 1.6.0 — recovered Android Studio project
+# HyperControl 1.7.0 — recovered Android Studio project
 
 This is an Android Studio/Gradle project reconstructed from the APK supplied by the user (`HyperControl_1.4.8.apk`). It turns the DEX back into readable Java and restores the APK resources/assets and LSPosed metadata into the usual project layout.
 
@@ -6,7 +6,7 @@ This is an Android Studio/Gradle project reconstructed from the APK supplied by 
 
 - Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
 - LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- Current build: `1.6.0`, versionCode `10600` (reconstructed from `1.4.8`, versionCode `10408`)
+- Current build: `1.7.0`, versionCode `10700` (reconstructed from `1.4.8`, versionCode `10408`)
 - Source APK SHA-256: recorded in [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
 
@@ -112,6 +112,37 @@ DexKit, flatbuffers and the Kotlin stdlib are proven sufficient.
 Cost of the index: the module grows from 79 KB to 514 KB (one 395 KB native engine for arm64 plus
 the Kotlin runtime DexKit is written in). That is the price of not baking obfuscated names into the
 module again.
+
+### 1.7.0 — Security Center, this time found by structure
+
+The three Security Center features are back, but nothing about them is pinned to a release any
+more. The 1.4.x implementation hard-coded `ScoreManager.q()/o()`, scraped a `Log.d` message to
+discover the score method, hooked every `String.equals` in the process, and guessed at
+`InterceptBaseFragment`'s `protected ()int` methods; all four guesses are wrong on this ROM
+(`ScoreManager.o()` is still private, `f0()` became the layout id, and the ADB activity now has a
+device/region early exit). `securitycenter/SecurityCenter.java` re-derives all of it:
+
+| switch | how the target is found | what it does |
+|---|---|---|
+| Zero predicted deduction | the method that uses the literal `getMinusPredictScore` | returns 0, so `100 - clamp(...)` stays at 100 |
+| Skip interception countdown | every `protected`, non-abstract, no-argument `int` method in the `InterceptBaseFragment` hierarchy | returns 0, so the dialog button is enabled immediately |
+| Skip ADB install verification | the `AdbInstallVerifyActivity` subclass, its `onCreate(Bundle)` | calls the parent `onCreate` and `finish()`, skipping the account and network round trip |
+
+Two details worth keeping in mind if these are ever touched again:
+
+- The layout id is also an `int`, so the `protected` filter is what separates `c0()` (countdown,
+  protected) from `f0()` (layout, public). Dropping that filter inflates the wrong resource.
+- The name filter also matches `InterceptBaseFragment$a/$b` and `AdbInstallVerifyActivity$a/$b`, so
+  inner classes are skipped explicitly.
+
+The old `String.equals` hook is gone: the ADB activity is now left entirely, which is both less
+invasive and cheaper, since no string comparison in the Security Center process pays for it.
+
+Verified by running these exact queries through `app_process` against the installed
+`MIUISecurityCenter.apk` (11.1.0, 3 dex, 61 MB): score resolves to `ScoreManager.o() ()int` in
+31 ms, the fragment search returns 5 classes of which `c0()` is `protected` (0x4) and `f0()` is
+`public`/`abstract` (0x401/0x1), and the ADB class exposes `onCreate(Bundle)`. The index is only
+built when at least one of the three switches is on, and it is shared with the XMS feature.
 
 ## Dex layout, R8 and compression
 

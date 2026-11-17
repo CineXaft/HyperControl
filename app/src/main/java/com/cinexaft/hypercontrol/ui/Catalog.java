@@ -24,6 +24,7 @@ public final class Catalog {
             row(context, preferenceCategory, "android", "系统框架");
             row(context, preferenceCategory, "com.android.systemui", "系统界面");
             row(context, preferenceCategory, "com.miui.powerkeeper", "电量和性能");
+            row(context, preferenceCategory, "com.miui.securitycenter", "hc_securitycenter");
             row(context, preferenceCategory, "com.android.htmlviewer", "HTML 查看器");
             row(context, preferenceCategory, "com.android.providers.downloads", "下载管理");
             row(context, preferenceCategory, "com.xiaomi.xmsf", "hc_xms");
@@ -43,6 +44,10 @@ public final class Catalog {
             preference.setIconSpaceReserved(false);
             preference.setIntent(new Intent().setClassName("com.google.android.gms", "com.google.android.gms.app.settings.GoogleSettingsLink").setAction("android.intent.action.VIEW"));
             preferenceCategory.addPreference(preference);
+            return;
+        }
+        if ("com.miui.securitycenter".equals(str)) {
+            SecurityCenterPage.fill(context, preferenceScreen);
             return;
         }
         if ("com.android.systemui".equals(str)) {

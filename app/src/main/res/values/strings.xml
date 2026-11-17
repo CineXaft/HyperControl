@@ -10,6 +10,7 @@
     <string name="hc_downloads">Download manager</string>
     <string name="hc_other">Other</string>
     <string name="hc_xms">XMS service framework</string>
+    <string name="hc_securitycenter">Security Center</string>
     <string name="hc_extended">Extended functions</string>
     <string name="hc_ads">Ad services</string>
     <string name="hc_restart">Restart</string>
@@ -44,6 +45,13 @@
     <string name="hc_ui27">Disable logs and .xlDownload creation.</string>
     <string name="hc_xms_auth">Unlock focus authentication</string>
     <string name="hc_xms_auth_desc">Report XMS authentication as successful even when it fails. Targets are found by structure (DexKit), so a renamed build still works. Restart the XMS service process after changing this.</string>
+    <string name="hc_sec_title">Security Center</string>
+    <string name="hc_sec_score">Zero predicted deduction</string>
+    <string name="hc_sec_score_desc">Report a full score; restart Security Center.</string>
+    <string name="hc_sec_intercept">Skip interception countdown</string>
+    <string name="hc_sec_intercept_desc">Enable the intercept dialog buttons immediately; restart Security Center.</string>
+    <string name="hc_sec_adb">Skip ADB install verification</string>
+    <string name="hc_sec_adb_desc">Finish the verification activity without asking; restart Security Center.</string>
     <string name="hc_confirmapp">Restart this app with root? Save your work first.</string>
     <string name="hc_confirmdownload">Restart the shared media process with root? Downloads and media may be interrupted.</string>
     <string name="hc_confirmsystem">Reboot the phone with root? Save all work first. Disable the module in recovery if boot fails.</string>

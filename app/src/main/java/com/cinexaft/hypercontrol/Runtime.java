@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import io.github.libxposed.api.XposedInterface;
+import com.cinexaft.hypercontrol.securitycenter.SecurityCenter;
 import java.io.File;
 import java.lang.reflect.Method;
 
@@ -17,6 +18,7 @@ public final class Runtime {
     private static final String GUARD_PROVIDER = "com.miui.guardprovider";
     private static final String DOWNLOADS = "com.android.providers.downloads";
     private static final String XMSF = "com.xiaomi.xmsf";
+    private static final String SECURITY_CENTER = "com.miui.securitycenter";
 
     private static boolean installed;
 
@@ -27,15 +29,19 @@ public final class Runtime {
     /**
      * Work that needs a live Context, run once from the Application.attach hook.
      *
-     * <p>The XMS feature has to build a DEX index through the host class loader, which is only
-     * worth doing when its switch is already on: the switch is read here, so changing it needs a
-     * restart of the service process, exactly like the other per-process features.
+     * <p>Both DEX-backed features read their switches here, so they are only wired up when they
+     * are already on: changing one therefore needs a restart of the host process, like every other
+     * per-process feature in this module.
      */
     public static void ready(Context context) {
-        if (!XMSF.equals(pkg) || loader == null || !State.enabled(13)) {
+        if (loader == null) {
             return;
         }
-        XmsAuth.install(context, loader);
+        if (XMSF.equals(pkg) && State.enabled(13)) {
+            XmsAuth.install(context, loader);
+        } else if (SECURITY_CENTER.equals(pkg)) {
+            SecurityCenter.install(context, loader);
+        }
     }
 
     private static boolean handled(String packageName) {
@@ -44,7 +50,8 @@ public final class Runtime {
                 || HTML_VIEWER.equals(packageName)
                 || GUARD_PROVIDER.equals(packageName)
                 || DOWNLOADS.equals(packageName)
-                || XMSF.equals(packageName);
+                || XMSF.equals(packageName)
+                || SECURITY_CENTER.equals(packageName);
     }
 
     private static void downloads(ClassLoader classLoader) {

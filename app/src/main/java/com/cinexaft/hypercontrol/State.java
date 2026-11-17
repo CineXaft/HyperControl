@@ -11,9 +11,9 @@ public final class State {
     private static volatile String mobileText;
 
     public static void bind(Context context) {
-        boolean[] zArr = new boolean[14];
+        boolean[] zArr = new boolean[17];
         ContentResolver contentResolver = context.getContentResolver();
-        for (int i = 0; i < 14; i++) {
+        for (int i = 0; i < 17; i++) {
             try {
                 zArr[i] = Settings.Global.getInt(contentResolver, setting(key(i)), 0) == 1;
             } catch (Throwable th) {
@@ -74,6 +74,12 @@ public final class State {
                 return "swap_mobile_wifi";
             case 13:
                 return "xms_auth_unlock";
+            case 14:
+                return "securitycenter_score_zero";
+            case 15:
+                return "securitycenter_intercept_bypass";
+            case 16:
+                return "securitycenter_adb_verify_bypass";
             default:
                 throw new IllegalArgumentException();
         }
