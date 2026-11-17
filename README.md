@@ -109,9 +109,25 @@ installed `auth-master.apk`: the search returns `com.xiaomi.xms.auth.i` with `b(
 builder. The same run used the R8-minified release APK as its classpath, so the keep rules for
 DexKit, flatbuffers and the Kotlin stdlib are proven sufficient.
 
-Cost of the index: the module grows from 79 KB to 514 KB (one 395 KB native engine for arm64 plus
-the Kotlin runtime DexKit is written in). That is the price of not baking obfuscated names into the
-module again.
+Cost of the index, measured: the APK goes from 79 KB to 350 KB (dex 89 KB -> 281 KB plus a 395 KB
+arm64 native engine, both deflated), and the index itself takes ~30 ms to build over three dex
+files. The dex side is dominated by DexKit and the Kotlin runtime it is written in, not by this
+module's own code (which stayed at ~90 KB).
+
+The first version of these keep rules pinned `org.luckypray.dexkit.**` with `-keep`, which left all
+648 classes in place - 451 of them DexKit's query DSL that this module never builds. `-keepnames`
+(`-keep,allowshrinking`) keeps every *name* while letting R8 delete the unreachable classes, which
+is what JNI and DexKit's own reflection actually require:
+
+| rule | why |
+|---|---|
+| `-keepnames org.luckypray.dexkit.**` | the .so exports `Java_org_luckypray_dexkit_DexKitBridge_nativeXxx`, and DexKit's helpers walk their own data classes by reflection |
+| `-keepnames com.google.flatbuffers.**` | same, for the schema readers behind the query byte arrays |
+| `-keepclasseswithmembernames` for `native` | belt and braces for the JNI entry points |
+
+Result: 648 -> 274 classes, dex 887 KB -> 281 KB, APK 514 KB -> 350 KB, with no behavioural
+difference - verified by rerunning the three queries against the *shrunk* dex through
+`app_process`, which is the same code path the module takes at runtime.
 
 ### 1.7.0 — Security Center, this time found by structure
 

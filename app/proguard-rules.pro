@@ -31,11 +31,19 @@
 # LSPosed uses annotations/enclosing metadata when reporting hook failures.
 -keepattributes *Annotation*, InnerClasses, EnclosingMethod, Signature
 
-# DexKit is a native parser driven from Java: the .so binds to these class and method names
-# through JNI, and its schema classes are read reflectively. Renaming any of them breaks the
-# bridge at runtime instead of at build time, so the whole library is pinned.
--keep class org.luckypray.dexkit.** { *; }
--keep class com.google.flatbuffers.** { *; }
+# DexKit is a native parser driven from Java. Two different constraints apply, and they are not
+# the same thing:
+#
+#  * the .so exports Java_org_luckypray_dexkit_DexKitBridge_nativeXxx, so that class name and those
+#    native method names must survive verbatim - otherwise the first call is an UnsatisfiedLinkError;
+#  * several of its own helpers walk their data classes by reflection, so names must stay readable.
+#
+# Neither of those prevents R8 from *shrinking* the library: the query DSL ships hundreds of
+# matchers this module never builds, and they can go. -keepnames (== -keep,allowshrinking) keeps
+# every name while still removing what is unreachable, which is exactly the combination needed.
+-keepnames class org.luckypray.dexkit.** { *; }
+-keepnames class com.google.flatbuffers.** { *; }
+-keepclasseswithmembernames,includedescriptorclasses class * { native <methods>; }
 # DexKit is written in Kotlin; the stdlib it links against must keep its annotations and
 # metadata, and its own optional dependencies are not needed here.
 -keep class kotlin.Metadata { *; }
