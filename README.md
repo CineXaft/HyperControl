@@ -39,6 +39,40 @@ The APK metadata specifies target SDK 37 while the initial project compile SDK i
 
 `device-stubs` provides compile-only stand-ins for private Android/MIUI classes (SettingsPreferenceFragment, MIUI SettingsLib preferences, hidden framework APIs and MIUI AlertDialog). These are only for editor/compiler resolution. The real OS supplies those classes on the supported Xiaomi/Redmi ROMs. **Never package or ship the stubs as runtime code.**
 
+## Dex layout and R8
+
+`assembleDebug` produces **six** `classes*.dex` files. That is normal AGP behaviour, not a
+packaging bug: without minification the project classes are dexed in incremental buckets and the
+debug pipeline keeps the buckets separate (`classes.dex`, `classes2.dex`, ...) so rebuilds stay
+fast. The total is still only ~150 KB.
+
+`assembleRelease` runs R8 (`isMinifyEnabled = true`) and emits a **single** `classes.dex`:
+
+| build | dex files | APK |
+|---|---|---|
+| `assembleDebug` (no R8) | 6 | 178 KB, debug-signed |
+| `assembleRelease` (R8) | 1 | 117 KB, unsigned |
+
+`isShrinkResources` is deliberately `false`: every UI string is looked up at runtime with
+`Resources.getIdentifier(name, "string", "dev.local.hypercontrol")`, so resource shrinking would
+delete strings the module still asks for by name.
+
+R8 renames most classes (`a.a`, `b.c`, ...), but a few names are load-bearing and are pinned in
+`app/proguard-rules.pro`:
+
+- `dev.local.hypercontrol.Entry` — looked up by name from `META-INF/xposed/java_init.list`.
+- `dev.local.hypercontrol.ui.NativeScreen` and `ui.PageBridge` — instantiated/loaded from string
+  literals (`":settings:show_fragment"`, `Class.forName`).
+- `dev.local.hypercontrol.core.{R,Config,Audit,Boot,NHook,Shared,Recovery}` — verified by name in
+  `Engine.verifyLinkedClasses()`.
+- Manifest components (`RestartProvider`, flasher `KernelProvider`/`FlashService`).
+- The `intercept(...)` member of every `XposedInterface.Hooker`: the interface comes from the
+  LSPosed API as a *library* type, so its method reference cannot be rewritten. The classes
+  themselves are still renamed.
+
+The release APK is unsigned. Sign it with your own key; it can never be a signature-compatible
+update for the published module unless the original key is used.
+
 ## Recovery fidelity
 
 Java files under `app/src/main/java` were decompiled from DEX using JADX 1.5.6. This is readable recovered code, not the original authored source. JADX may reconstruct control flow imperfectly; names belonging to platform code may also be obfuscated. Keep the original smali/APK as audit reference when modifying hooks. APK metadata/assets/resources were decoded with Apktool 3.0.3.

@@ -13,6 +13,17 @@ android {
         versionName = "1.4.8"
     }
 
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = false // strings are resolved dynamically by name
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            isMinifyEnabled = false
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -22,8 +33,8 @@ android {
 }
 
 dependencies {
-    // The module is injected into the Settings process; AndroidX and framework classes are
-    // supplied by com.android.settings at runtime, exactly as in the original 73 KB APK.
+    // Injected into the Settings process: AndroidX and framework classes come from
+    // com.android.settings at runtime, exactly like the original 73 KB APK.
     compileOnly("androidx.appcompat:appcompat:1.7.0")
     compileOnly("androidx.fragment:fragment:1.8.5")
     compileOnly("androidx.preference:preference:1.2.1")
