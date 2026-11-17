@@ -14,10 +14,21 @@ The application ID and Java namespace intentionally differ, matching the supplie
 
 ## Current build status
 
-The project configuration and Java source tree are in place. On the ARM64 Linux environment used for recovery, Gradle configuration and resource processing start successfully, but the full Android Gradle build is not yet green: AGP's AAPT2 daemon expects a native executable, while the downloaded Google build-tools AAPT2 is x86_64 and must be run through QEMU. The project includes the SDK/build-tool setup and wrapper notes for continuing on an x86_64 development host or after configuring a native/transparent AAPT2 toolchain. This is an environment/toolchain limitation, not evidence that the recovered Java is equivalent to the original source.
+Verified on an ARM64 Linux host with JDK 21, Android SDK Platform 35 and Gradle 8.11.1:
 
-The recovered project should therefore be treated as **Android Studio-readable and GitHub-ready**, not as a verified release-buildable replacement yet.
+```bash
+JAVA_HOME=<jdk17+> ANDROID_HOME=<sdk> ./gradlew \
+  -Pandroid.aapt2FromMavenOverride=<aapt2 wrapper> :app:assembleDebug
+```
 
+`BUILD SUCCESSFUL` - the debug APK contains all 58 classes from the original DEX (plus
+Gradle-generated `R` classes), and its Xposed metadata, assets and manifest components match the
+supplied APK. It is debug-signed, so it cannot update the published module.
+
+The ARM64 host needed a QEMU wrapper for Google's x86_64 AAPT2; see `bin/aapt2-qemu` and
+`-Pandroid.aapt2FromMavenOverride=`. On an x86_64 host none of that is required.
+
+## Open in Android Studio
 
 1. Open this folder as a Gradle project.
 2. Use JDK 17 or newer and install Android SDK Platform 35 (or the platform required by the build).
