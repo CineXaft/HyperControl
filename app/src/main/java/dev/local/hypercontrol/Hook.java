@@ -28,11 +28,11 @@ public final class Hook implements XposedInterface.Hooker {
 
     /* JADX WARN: Type inference failed for: r0v5, types: [java.lang.CharSequence, java.lang.Object] */
     /* JADX WARN: Type inference failed for: r1v9, types: [java.lang.CharSequence, java.lang.Object] */
-    private static void append(Context context, List list) throws IllegalAccessException, NoSuchFieldException, InstantiationException {
+    private static void append(Context context, List list) throws Throwable {
         Object obj;
         Iterator it = list.iterator();
         while (it.hasNext()) {
-            if (TextUtils.equals("hypercontrol_entry", Reflect.getObjectField(it.next(), "key"))) {
+            if (TextUtils.equals("hypercontrol_entry", (CharSequence) Reflect.getObjectField(it.next(), "key"))) {
                 return;
             }
         }
@@ -45,7 +45,7 @@ public final class Hook implements XposedInterface.Hooker {
                 return;
             }
             obj = list.get(i);
-            if (!TextUtils.equals("hypercontrol_entry", Reflect.getObjectField(obj, "key"))) {
+            if (!TextUtils.equals("hypercontrol_entry", (CharSequence) Reflect.getObjectField(obj, "key"))) {
                 if ((identifier != 0 && ((int) Reflect.field(obj, "id").getLong(obj)) == identifier) || "com.android.settings.device.MiuiMyDeviceSettings".equals(Reflect.getObjectField(obj, "fragment"))) {
                     break;
                 } else {
@@ -81,7 +81,7 @@ public final class Hook implements XposedInterface.Hooker {
         list.add(i + 1, objNewInstance);
     }
 
-    private static synchronized Class loadScreen() throws ClassNotFoundException {
+    private static synchronized Class loadScreen() throws Throwable {
         Class cls = screen;
         if (cls != null) {
             return cls;
@@ -101,7 +101,8 @@ public final class Hook implements XposedInterface.Hooker {
     /* JADX WARN: Code duplicated, block: B:13:0x0027  */
     /* JADX WARN: Code duplicated, block: B:15:0x002e A[RETURN] */
     /* JADX WARN: Code duplicated, block: B:16:0x002f  */
-    public Object intercept(XposedInterface.Chain chain) throws IllegalAccessException, ClassNotFoundException, InvocationTargetException {
+
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         Class clsLoadScreen;
         int i = this.mode;
         if (i == 0) {

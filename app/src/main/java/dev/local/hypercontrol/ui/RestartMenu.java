@@ -19,7 +19,11 @@ public final class RestartMenu implements MenuItem.OnMenuItemClickListener {
         if (activity == null) {
             return true;
         }
-        Restart.confirm(activity, this.target);
+        try {
+            Restart.confirm(activity, this.target);
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
         return true;
     }
 }

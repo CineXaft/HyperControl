@@ -9,7 +9,7 @@ import dev.local.hypercontrol.ui.Strings;
 
 /* JADX INFO: loaded from: classes.dex */
 public final class RestartTarget {
-    public static String label(Context context, String str) {
+    public static String label(Context context, String str) throws PackageManager.NameNotFoundException {
         if ("android".equals(str)) {
             return Strings.get(context, "hc_framework");
         }
@@ -26,7 +26,7 @@ public final class RestartTarget {
         return packageManager.getApplicationInfo(str, 0).loadLabel(packageManager).toString();
     }
 
-    public static String script(Context context, String str) {
+    public static String script(Context context, String str) throws PackageManager.NameNotFoundException {
         ComponentName component;
         if ("android".equals(str)) {
             return "[ \"$(id -u)\" = 0 ] || exit 20; /system/bin/svc power reboot";

@@ -59,7 +59,7 @@ public final class SignalHook implements XposedInterface.Hooker, View.OnLayoutCh
         viewChild.setAlpha(0.0f);
     }
 
-    public Object intercept(XposedInterface.Chain chain) {
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         View viewChild;
         Object objProceed = chain.proceed();
         int iSignalMask = State.signalMask();

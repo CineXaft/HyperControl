@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,11 +26,11 @@ public final class Restart implements Runnable, DialogInterface.OnClickListener 
         this.activity = activity;
     }
 
-    public static void confirm(Activity activity) {
+    public static void confirm(Activity activity) throws PackageManager.NameNotFoundException {
         confirm(activity, "com.android.systemui");
     }
 
-    public static void confirm(Activity activity, String str) {
+    public static void confirm(Activity activity, String str) throws PackageManager.NameNotFoundException {
         Restart restart = new Restart(activity);
         restart.target = str;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);

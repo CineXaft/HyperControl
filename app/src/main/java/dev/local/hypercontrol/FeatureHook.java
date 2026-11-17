@@ -12,7 +12,7 @@ public final class FeatureHook implements XposedInterface.Hooker {
         this.mode = i;
     }
 
-    public Object intercept(XposedInterface.Chain chain) throws IOException {
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         int i = this.mode;
         if (i < 0) {
             Object arg = chain.getArg(0);

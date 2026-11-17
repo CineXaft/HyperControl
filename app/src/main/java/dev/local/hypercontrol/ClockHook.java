@@ -11,7 +11,8 @@ public final class ClockHook implements XposedInterface.Hooker {
         this.kind = i;
     }
 
-    public Object intercept(XposedInterface.Chain chain) {
+    @Override
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         Object obj;
         if (State.enabled(11)) {
             try {

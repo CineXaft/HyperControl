@@ -29,7 +29,7 @@ public final class MobileWifiHook implements XposedInterface.Hooker, InvocationH
         }
     }
 
-    public Object intercept(XposedInterface.Chain chain) {
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         Object objProceed = chain.proceed();
         if (State.enabled(10)) {
             try {

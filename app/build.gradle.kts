@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId = "com.cinexaft.hypercontrol"
         minSdk = 35
-        // APK metadata reports target 37. Set compile SDK 37 before attempting a release rebuild.
+        // The original APK metadata reports target 37; keep it and use a matching SDK for releases.
         targetSdk = 37
         versionCode = 10408
         versionName = "1.4.8"
@@ -22,9 +22,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.fragment:fragment:1.8.5")
-    implementation("androidx.preference:preference:1.2.1")
+    // The module is injected into the Settings process; AndroidX and framework classes are
+    // supplied by com.android.settings at runtime, exactly as in the original 73 KB APK.
+    compileOnly("androidx.appcompat:appcompat:1.7.0")
+    compileOnly("androidx.fragment:fragment:1.8.5")
+    compileOnly("androidx.preference:preference:1.2.1")
     compileOnly("io.github.libxposed:api:102.0.0")
     compileOnly(project(":device-stubs"))
 }

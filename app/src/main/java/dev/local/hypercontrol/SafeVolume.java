@@ -99,7 +99,7 @@ public final class SafeVolume implements XposedInterface.Hooker {
         }
     }
 
-    public Object intercept(XposedInterface.Chain chain) {
+    public Object intercept(XposedInterface.Chain chain) throws Throwable {
         if (this.kind != 0) {
             bind(chain.getThisObject());
         } else if (enabled) {

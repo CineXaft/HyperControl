@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /* JADX INFO: loaded from: classes.dex */
 public final class ClockExpand {
@@ -106,7 +107,7 @@ public final class ClockExpand {
         throw new NoSuchMethodException(str);
     }
 
-    public static Float noNotifY(Object obj) {
+    public static Float noNotifY(Object obj) throws IllegalAccessException, InvocationTargetException {
         int iIntValue;
         fRawY.setFloat(obj, Float.MAX_VALUE);
         int i = ((Rect) fEditRect.get(obj)).bottom;

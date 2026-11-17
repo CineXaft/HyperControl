@@ -56,8 +56,13 @@ public final class RestartProvider extends ContentProvider {
     }
 
     @Override // android.content.ContentProvider
-    public Bundle call(String str, String str2, Bundle bundle) throws PackageManager.NameNotFoundException {
-        ApplicationInfo applicationInfo = getContext().getPackageManager().getApplicationInfo("com.android.settings", 0);
+    public Bundle call(String str, String str2, Bundle bundle) {
+        ApplicationInfo applicationInfo;
+        try {
+            applicationInfo = getContext().getPackageManager().getApplicationInfo("com.android.settings", 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new SecurityException("System Settings package not found", e);
+        }
         if (Binder.getCallingUid() != applicationInfo.uid || (applicationInfo.flags & 1) == 0) {
             throw new SecurityException("Only system Settings UID is allowed");
         }

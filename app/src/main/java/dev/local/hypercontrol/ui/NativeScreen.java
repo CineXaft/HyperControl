@@ -24,6 +24,14 @@ public final class NativeScreen extends SettingsPreferenceFragment {
     private String target;
     private String title;
 
+    private String safeLabel(Context context, String packageName) {
+        try {
+            return RestartTarget.label(context, packageName);
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            return packageName;
+        }
+    }
+
     private void addRestart(Menu menu) {
         int identifier;
         String str = this.target;
@@ -77,11 +85,11 @@ public final class NativeScreen extends SettingsPreferenceFragment {
             String string2 = arguments.getString("target");
             if (string2 != null) {
                 this.target = string2;
-                this.title = RestartTarget.label(getPreferenceManager().getContext(), string2);
+                this.title = safeLabel(getPreferenceManager().getContext(), string2);
             } else if (arguments.getBoolean("hc_systemui")) {
                 string2 = "com.android.systemui";
                 this.target = string2;
-                this.title = RestartTarget.label(getPreferenceManager().getContext(), string2);
+                this.title = safeLabel(getPreferenceManager().getContext(), string2);
             }
         }
         PreferenceManager preferenceManager = getPreferenceManager();

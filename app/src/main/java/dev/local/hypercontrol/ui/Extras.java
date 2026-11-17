@@ -35,8 +35,8 @@ public final class Extras {
             XmlPullParser xmlPullParserNewPullParser = Xml.newPullParser();
             xmlPullParserNewPullParser.setInput(inputStream, "UTF-8");
             PreferenceScreen preferenceCategoryCreatePreferenceScreen = preferenceManager.createPreferenceScreen(context);
-            PreferenceGroup preferenceCategory = preferenceCategoryCreatePreferenceScreen;
-            Preference preference = null;
+            androidx.preference.PreferenceGroup preferenceCategory = preferenceCategoryCreatePreferenceScreen;
+            androidx.preference.Preference preference = null;
             while (true) {
                 int next = xmlPullParserNewPullParser.next();
                 if (next == 1) {
