@@ -26,6 +26,7 @@
     <string name="hc_ui8">Hide Wi-Fi activity indicators</string>
     <string name="hc_ui9">Hide Wi-Fi standard</string>
     <string name="hc_ui10">Hide mobile network type on Wi-Fi</string>
+    <string name="hc_ui11">Swap mobile and Wi-Fi icons</string>
     <string name="hc_ui13">Prevent app killing</string>
     <string name="hc_ui14">Disable cloud control sync</string>
     <string name="hc_ui15">Disable cloud updates</string>
@@ -35,6 +36,7 @@
     <string name="hc_ui19">Hide Wi-Fi traffic arrows.</string>
     <string name="hc_ui20">Hide standard number, keep Wi-Fi icon.</string>
     <string name="hc_ui21">Hide mobile type on Wi-Fi, keep signal bars.</string>
+    <string name="hc_ui22">Put the Wi-Fi icon left of the mobile signal; restart System UI.</string>
     <string name="hc_ui24">Block cleanup; may increase power use.</string>
     <string name="hc_ui25">Stop cloud sync; keep existing data.</string>
     <string name="hc_ui26">Stop cloud updates; keep existing data.</string>

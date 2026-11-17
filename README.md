@@ -1,4 +1,4 @@
-# HyperControl 1.4.8 — recovered Android Studio project
+# HyperControl 1.5.0 — recovered Android Studio project
 
 This is an Android Studio/Gradle project reconstructed from the APK supplied by the user (`HyperControl_1.4.8.apk`). It turns the DEX back into readable Java and restores the APK resources/assets and LSPosed metadata into the usual project layout.
 
@@ -6,7 +6,7 @@ This is an Android Studio/Gradle project reconstructed from the APK supplied by 
 
 - Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
 - LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- APK version: `1.4.8`, versionCode `10408`
+- Current build: `1.5.0`, versionCode `10500` (reconstructed from `1.4.8`, versionCode `10408`)
 - Source APK SHA-256: recorded in [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
 
@@ -75,6 +75,16 @@ Hook overhead work in the hot paths:
   re-entrancy semantics are unchanged.
 - `Runtime.install()`'s five-way boolean OR chain became a `handled()` predicate plus a switch;
   a signature mismatch now skips one hook with a warning instead of aborting the rest.
+
+### 1.5.0 — status bar icon swap
+
+`SwapHook` adds the "Swap mobile and Wi-Fi icons" switch under *System UI*. It does not touch
+layout code: HyperOS lays the icon container out from the right edge in reverse child order, so
+the child order *is* the visual order and exchanging the two children is enough. The exchange is
+posted after the container reports a new child (its `onViewAdded`), which is the only point where
+both views are guaranteed to exist, and it is idempotent — after the first swap the check sees
+Wi-Fi at the lower index and does nothing. A firmware that renames or drops the container simply
+logs a warning and leaves the status bar alone.
 
 ## Dex layout, R8 and compression
 

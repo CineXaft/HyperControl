@@ -70,6 +70,7 @@ public final class Runtime {
             if (SYSTEMUI.equals(packageName)) {
                 SignalHook.install(classLoader);
                 MobileWifiHook.install(classLoader);
+                SwapHook.install(classLoader);
                 ClockExpand.install(classLoader);
                 hook(classLoader, "com.android.systemui.statusbar.notification.mediaisland.MiuiIslandMediaControllerImpl$mediaDataChangeListener$1",
                         "onMediaDataChanged",

@@ -25,6 +25,7 @@
     <string name="hc_ui8">隐藏 Wi-Fi 活动指示器</string>
     <string name="hc_ui9">隐藏 Wi-Fi 标准</string>
     <string name="hc_ui10">Wi-Fi 下隐藏移动网络类型</string>
+    <string name="hc_ui11">移动信号与 Wi-Fi 图标互换</string>
     <string name="hc_ui13">禁止杀应用</string>
     <string name="hc_ui14">去除云控</string>
     <string name="hc_ui15">禁用云控更新</string>
@@ -34,6 +35,7 @@
     <string name="hc_ui19">隐藏 Wi-Fi 数据箭头。</string>
     <string name="hc_ui20">隐藏标准数字，保留 Wi-Fi 图标。</string>
     <string name="hc_ui21">Wi-Fi 下隐藏网络类型，保留信号格。</string>
+    <string name="hc_ui22">Wi-Fi 图标移到移动信号左侧，重启系统界面生效。</string>
     <string name="hc_ui24">阻止清理应用，可能增加耗电。</string>
     <string name="hc_ui25">停止云控同步，不清除已有数据。</string>
     <string name="hc_ui26">停止云控更新，不清除已有数据。</string>

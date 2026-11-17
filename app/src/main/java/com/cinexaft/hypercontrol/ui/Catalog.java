@@ -51,6 +51,7 @@ public final class Catalog {
             feature(context, preferenceCategory, 8, "hc_ui8", "hc_ui19");
             feature(context, preferenceCategory, 9, "hc_ui9", "hc_ui20");
             feature(context, preferenceCategory, 10, "hc_ui10", "hc_ui21");
+            feature(context, preferenceCategory, 12, "hc_ui11", "hc_ui22");
             preferenceCategory.addPreference(new MobileTextPreference(context));
             PreferenceCategory preferenceCategory2 = new PreferenceCategory(context);
             preferenceCategory2.setTitle(Strings.get(context, "hc_lockscreen"));
