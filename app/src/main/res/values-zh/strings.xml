@@ -8,6 +8,7 @@
     <string name="hc_html">HTML 查看器</string>
     <string name="hc_downloads">下载管理</string>
     <string name="hc_other">其他</string>
+    <string name="hc_xms">小米服务框架</string>
     <string name="hc_extended">拓展功能</string>
     <string name="hc_ads">广告服务</string>
     <string name="hc_restart">重启</string>
@@ -42,6 +43,8 @@
     <string name="hc_ui27">关闭迅雷日志，禁止创建 .xlDownload。</string>
     <string name="hc_confirmapp">使用 root 重启此应用？请先保存操作。</string>
     <string name="hc_confirmdownload">使用 root 重启共享媒体进程？下载和媒体服务可能中断。</string>
+    <string name="hc_xms_auth">解锁焦点认证</string>
+    <string name="hc_xms_auth_desc">认证失败时强制返回成功。目标由 DexKit 按结构查找，混淆或改名后仍可命中。修改后需重启服务框架进程。</string>
     <string name="hc_confirmsystem">使用 root 重启手机？请先保存操作。若无法开机，在恢复环境停用模块。</string>
     <string name="hc_rebootquestion">重启整个手机？</string>
     <string name="hc_unavailable">入口不可用或无权限。</string>

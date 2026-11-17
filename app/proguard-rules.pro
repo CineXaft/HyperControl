@@ -30,3 +30,15 @@
 
 # LSPosed uses annotations/enclosing metadata when reporting hook failures.
 -keepattributes *Annotation*, InnerClasses, EnclosingMethod, Signature
+
+# DexKit is a native parser driven from Java: the .so binds to these class and method names
+# through JNI, and its schema classes are read reflectively. Renaming any of them breaks the
+# bridge at runtime instead of at build time, so the whole library is pinned.
+-keep class org.luckypray.dexkit.** { *; }
+-keep class com.google.flatbuffers.** { *; }
+# DexKit is written in Kotlin; the stdlib it links against must keep its annotations and
+# metadata, and its own optional dependencies are not needed here.
+-keep class kotlin.Metadata { *; }
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-dontwarn kotlin.**
+-dontwarn org.jetbrains.annotations.**

@@ -16,15 +16,35 @@ public final class Runtime {
     private static final String HTML_VIEWER = "com.android.htmlviewer";
     private static final String GUARD_PROVIDER = "com.miui.guardprovider";
     private static final String DOWNLOADS = "com.android.providers.downloads";
+    private static final String XMSF = "com.xiaomi.xmsf";
 
     private static boolean installed;
+
+    /** Package this process was loaded for, and its class loader; kept for {@link #ready}. */
+    private static String pkg;
+    private static ClassLoader loader;
+
+    /**
+     * Work that needs a live Context, run once from the Application.attach hook.
+     *
+     * <p>The XMS feature has to build a DEX index through the host class loader, which is only
+     * worth doing when its switch is already on: the switch is read here, so changing it needs a
+     * restart of the service process, exactly like the other per-process features.
+     */
+    public static void ready(Context context) {
+        if (!XMSF.equals(pkg) || loader == null || !State.enabled(13)) {
+            return;
+        }
+        XmsAuth.install(context, loader);
+    }
 
     private static boolean handled(String packageName) {
         return SYSTEMUI.equals(packageName)
                 || POWER_KEEPER.equals(packageName)
                 || HTML_VIEWER.equals(packageName)
                 || GUARD_PROVIDER.equals(packageName)
-                || DOWNLOADS.equals(packageName);
+                || DOWNLOADS.equals(packageName)
+                || XMSF.equals(packageName);
     }
 
     private static void downloads(ClassLoader classLoader) {
@@ -61,6 +81,8 @@ public final class Runtime {
             return;
         }
         installed = true;
+        pkg = packageName;
+        loader = classLoader;
         try {
             Reflect.hook(Application.class.getDeclaredMethod("attach", Context.class), new FeatureHook(-1));
         } catch (Throwable error) {

@@ -9,8 +9,12 @@ android {
         minSdk = 35
         // The original APK metadata reports target 37; keep it and use a matching SDK for releases.
         targetSdk = 37
-        versionCode = 10500
-        versionName = "1.5.0"
+        versionCode = 10600
+        versionName = "1.6.0"
+        ndk {
+            // DexKit ships one native library per ABI; the module is arm64 only, like the ROM.
+            abiFilters += "arm64-v8a"
+        }
     }
 
     buildTypes {
@@ -32,6 +36,11 @@ android {
         dex {
             useLegacyPackaging = true
         }
+        // libdexkit.so is unpacked by Dex.java from this APK, so it does not need to stay stored;
+        // deflating it saves ~300 KB.
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     compileOptions {
@@ -49,5 +58,8 @@ dependencies {
     compileOnly("androidx.fragment:fragment:1.8.5")
     compileOnly("androidx.preference:preference:1.2.1")
     compileOnly("io.github.libxposed:api:102.0.0")
+    // Shipped inside the module: a runtime DEX index used to find obfuscated targets. The native
+    // engine is unpacked from this APK at runtime (see Dex.java), not loaded from lib/.
+    implementation("org.luckypray:dexkit:2.3.0")
     compileOnly(project(":device-stubs"))
 }

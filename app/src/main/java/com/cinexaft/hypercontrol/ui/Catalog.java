@@ -26,6 +26,7 @@ public final class Catalog {
             row(context, preferenceCategory, "com.miui.powerkeeper", "电量和性能");
             row(context, preferenceCategory, "com.android.htmlviewer", "HTML 查看器");
             row(context, preferenceCategory, "com.android.providers.downloads", "下载管理");
+            row(context, preferenceCategory, "com.xiaomi.xmsf", "hc_xms");
             row(context, preferenceCategory, "hc.other", "其他");
             return;
         }
@@ -66,6 +67,9 @@ public final class Catalog {
         } else if ("com.android.providers.downloads".equals(str)) {
             preferenceCategory.setTitle(Strings.get(context, "hc_ui5"));
             feature(context, preferenceCategory, 6, "hc_ui16", "hc_ui27");
+        } else if ("com.xiaomi.xmsf".equals(str)) {
+            preferenceCategory.setTitle(Strings.get(context, "hc_xms"));
+            feature(context, preferenceCategory, 13, "hc_xms_auth", "hc_xms_auth_desc");
         } else {
             preferenceCategory.setTitle(Strings.get(context, "hc_ui4"));
             feature(context, preferenceCategory, 5, "hc_ui15", "hc_ui26");

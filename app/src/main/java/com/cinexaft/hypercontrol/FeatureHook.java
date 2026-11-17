@@ -18,6 +18,7 @@ public final class FeatureHook implements XposedInterface.Hooker {
             Object arg = chain.getArg(0);
             if (arg instanceof Context) {
                 State.bind((Context) arg);
+                Runtime.ready((Context) arg);
             }
         } else if (i == 10) {
             String strCustomMobileText = State.customMobileText();

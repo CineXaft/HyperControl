@@ -11,9 +11,9 @@ public final class State {
     private static volatile String mobileText;
 
     public static void bind(Context context) {
-        boolean[] zArr = new boolean[13];
+        boolean[] zArr = new boolean[14];
         ContentResolver contentResolver = context.getContentResolver();
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 14; i++) {
             try {
                 zArr[i] = Settings.Global.getInt(contentResolver, setting(key(i)), 0) == 1;
             } catch (Throwable th) {
@@ -72,6 +72,8 @@ public final class State {
                 return "keep_clock_expanded";
             case 12:
                 return "swap_mobile_wifi";
+            case 13:
+                return "xms_auth_unlock";
             default:
                 throw new IllegalArgumentException();
         }

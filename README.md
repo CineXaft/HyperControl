@@ -1,4 +1,4 @@
-# HyperControl 1.5.0 — recovered Android Studio project
+# HyperControl 1.6.0 — recovered Android Studio project
 
 This is an Android Studio/Gradle project reconstructed from the APK supplied by the user (`HyperControl_1.4.8.apk`). It turns the DEX back into readable Java and restores the APK resources/assets and LSPosed metadata into the usual project layout.
 
@@ -6,7 +6,7 @@ This is an Android Studio/Gradle project reconstructed from the APK supplied by 
 
 - Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
 - LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- Current build: `1.5.0`, versionCode `10500` (reconstructed from `1.4.8`, versionCode `10408`)
+- Current build: `1.6.0`, versionCode `10600` (reconstructed from `1.4.8`, versionCode `10408`)
 - Source APK SHA-256: recorded in [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
 
@@ -85,6 +85,33 @@ posted after the container reports a new child (its `onViewAdded`), which is the
 both views are guaranteed to exist, and it is idempotent — after the first swap the check sees
 Wi-Fi at the lower index and does nothing. A firmware that renames or drops the container simply
 logs a warning and leaves the status bar alone.
+
+### 1.6.0 — DexKit and the focus-auth unlock
+
+`com.xiaomi.xmsf` is now a hook target, and its one switch needs a DEX index: the auth module that
+ships with this ROM is fully renamed by R8 (`com.xiaomi.xms.auth.a … n`), so no class or method name
+from the original module survives. `Dex.java` owns the index — it unpacks `libdexkit.so` from this
+APK into the host's code cache once per process, loads it by absolute path, and keeps a
+`DexKitBridge` per process. Nothing is loaded unless the switch is already on when the process
+starts, which is why changing it needs a restart of the service process.
+
+`XmsAuth.java` then looks for the session class structurally: the class whose methods reference the
+literal `"Auth is successful"`, and inside it the zero-argument and one-argument methods that both
+return a `Bundle`. Intercepting the one-argument method and returning the zero-argument result makes
+a failed authentication report success. The error object is only read (for the log line) — nothing
+downstream sees it once the result is replaced. If the success builder throws (a session that never
+reached a usable state), the hook falls back to the original error instead of converting it into a
+crash.
+
+Verified on the target device by running the module's exact query through `app_process` against the
+installed `auth-master.apk`: the search returns `com.xiaomi.xms.auth.i` with `b(int param)`,
+`c(three params, ignored)` and `h()`, i.e. the error builder, an unrelated helper and the success
+builder. The same run used the R8-minified release APK as its classpath, so the keep rules for
+DexKit, flatbuffers and the Kotlin stdlib are proven sufficient.
+
+Cost of the index: the module grows from 79 KB to 514 KB (one 395 KB native engine for arm64 plus
+the Kotlin runtime DexKit is written in). That is the price of not baking obfuscated names into the
+module again.
 
 ## Dex layout, R8 and compression
 
