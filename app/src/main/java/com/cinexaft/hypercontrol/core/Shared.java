@@ -16,11 +16,11 @@ public final class Shared {
         ThreadLocal<Object> previous = Engine.origin;
         Object saved = previous.get();
         previous.set(Boolean.TRUE);
-        Engine.guarding++;
+        Engine.guarding.incrementAndGet();
         try {
             return ((Boolean) R.call(obj, "checkCapability", new Object[]{obj2, 0})).booleanValue();
         } finally {
-            Engine.guarding--;
+            Engine.guarding.decrementAndGet();
             previous.set(saved);
         }
     }

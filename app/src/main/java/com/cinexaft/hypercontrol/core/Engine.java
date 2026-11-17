@@ -19,7 +19,8 @@ public final class Engine {
      * ThreadLocal lookup entirely in the normal case (nobody guarding), which is the common path
      * for PackageManagerService hooks.
      */
-    public static volatile int guarding;
+    public static final java.util.concurrent.atomic.AtomicInteger guarding =
+            new java.util.concurrent.atomic.AtomicInteger();
     public static final ThreadLocal keyContext = new ThreadLocal();
 
     private static void attach(Executable executable, int i, int i2, String str) {

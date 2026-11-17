@@ -31,7 +31,7 @@ public final class NHook implements XposedInterface.Hooker {
         if (this.disabled) {
             return chain.proceed();
         }
-        if (Engine.guarding != 0 && Boolean.TRUE.equals(Engine.origin.get())) {
+        if (Engine.guarding.get() != 0 && Boolean.TRUE.equals(Engine.origin.get())) {
             return chain.proceed();
         }
         int i = this.kind;
