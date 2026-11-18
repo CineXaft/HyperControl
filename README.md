@@ -1,11 +1,42 @@
 # HyperControl 1.7.0
 
-An LSPosed module for Xiaomi HyperOS. This repository holds the full Android Studio project: the
-Java sources, resources, assets and LSPosed metadata, laid out exactly as the APK is built from.
+[![Release](https://img.shields.io/github/v/release/CineXaft/HyperControl?label=release)](https://github.com/CineXaft/HyperControl/releases/latest)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
-The 1.4.8 baseline was recovered from the published APK (the original author's own build, whose
-sources had to be decompiled back from the DEX); everything above it — see the changelog sections
-below — was written afterwards.
+An LSPosed module for Xiaomi HyperOS. Small, self-contained switches — no companion app, no
+service of its own; everything is injected into the system process that owns the behaviour.
+
+**Status bar** — swap the mobile signal and Wi-Fi icons, hide the media island, hide data activity
+arrows, hide the Wi-Fi standard, replace the mobile network type with your own text, keep the lock
+screen clock expanded.
+
+**Security Center** — report a full security score, drop the permission-intercept countdown, skip
+ADB install verification.
+
+**System framework** — install old app versions, relax APK signature checks, remove the safe media
+volume limit, allow capturing protected content, fix Passkey.
+
+**Other** — prevent apps from being killed, stop cloud control / cloud updates, block the Xunlei
+download log directory, an AnyKernel kernel flasher (based on Horizon Kernel Flasher by LibXZR).
+
+Targets are found *structurally* through [DexKit](https://github.com/LuckyPray/DexKit) wherever the
+firmware renames its internals, so a ROM update does not silently break a switch — it just skips
+the one hook it can no longer identify and logs why.
+
+This repository holds the full Android Studio project: the Java sources, resources, assets and
+LSPosed metadata, laid out exactly as the APK is built from. The 1.4.8 baseline was recovered from
+the published APK (whose sources had to be decompiled back from the DEX); everything above it — see
+the changelog sections below — was written afterwards.
+
+## Install
+
+1. Download `HyperControl_1.7.0.apk` from [Releases](https://github.com/CineXaft/HyperControl/releases/latest).
+2. Install it, enable the module in LSPosed, and select the apps you want it to act on
+   (`com.android.systemui`, `com.miui.securitycenter`, `com.xiaomi.xmsf`, …).
+3. Open **HyperControl** from the Settings homepage.
+
+Requires HyperOS 2, `minSdk 35`, libxposed API 102. Switches whose target is found by DexKit build
+their index when the host process starts, so restart that process after toggling them.
 
 ## Identity and version
 
