@@ -50,16 +50,19 @@ printf 'sdk.dir=/path/to/Android/Sdk\n' > local.properties
 Verified: a clean clone of this repository builds the release APK with no other setup
 (≈17 s on an 8-core ARM64 host, `BUILD SUCCESSFUL`).
 
-## Third-party dependencies
+## License
 
-These keep their own licenses and are used unmodified:
+Copyright (C) 2023-2026 CineXaft.
+
+Licensed under the GNU General Public License v3.0 or later — see [`LICENSE`](LICENSE). In short:
+you may use, study, share and modify this module, but a distributed modified version must also be
+GPL-3.0 and ship its sources.
+
+Third-party components keep their own licenses and are used unmodified:
 
 - DexKit (`org.luckypray:dexkit`) — LGPL-3.0 / Apache-2.0, © LuckyPray.
 - libxposed API (`io.github.libxposed:api`) — Apache-2.0, compile-only.
 - AndroidX (appcompat / fragment / preference) — Apache-2.0, compile-only.
-
-Release builds are signed with the AOSP testkey so they can update the published module; an
-unofficial build should not be presented as an official release.
 
 ## Open in Android Studio
 
