@@ -1,13 +1,19 @@
-# HyperControl 1.7.0 — recovered Android Studio project
+# HyperControl 1.7.0
 
-This is an Android Studio/Gradle project reconstructed from the APK supplied by the user (`HyperControl_1.4.8.apk`). It turns the DEX back into readable Java and restores the APK resources/assets and LSPosed metadata into the usual project layout.
+An LSPosed module for Xiaomi HyperOS. This repository holds the full Android Studio project: the
+Java sources, resources, assets and LSPosed metadata, laid out exactly as the APK is built from.
+
+The 1.4.8 baseline was recovered from the published APK (the original author's own build, whose
+sources had to be decompiled back from the DEX); everything above it — see the changelog sections
+below — was written afterwards.
 
 ## Identity and version
 
 - Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
 - LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- Current build: `1.7.0`, versionCode `10700` (reconstructed from `1.4.8`, versionCode `10408`)
-- Source APK SHA-256: recorded in [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
+- Current build: `1.7.0`, versionCode `10700`
+- Baseline APK: `1.4.8`, versionCode `10408`; its SHA-256 is in
+  [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
 
 The supplied 1.4.8 APK shipped its Java code under `dev.local.hypercontrol` while its application
@@ -44,13 +50,16 @@ printf 'sdk.dir=/path/to/Android/Sdk\n' > local.properties
 Verified: a clean clone of this repository builds the release APK with no other setup
 (≈17 s on an 8-core ARM64 host, `BUILD SUCCESSFUL`).
 
-## Licensing and provenance
+## Third-party dependencies
 
-Read [`NOTICE.md`](NOTICE.md) before publishing or redistributing anything from this repository.
-The Java sources are a decompilation of a third-party APK that came with no license, so this
-project deliberately ships **no** `LICENSE` file; [`LICENSE-STATUS.md`](LICENSE-STATUS.md) tracks
-the open question. The bundled dependencies (DexKit, libxposed API, AndroidX) do have licenses and
-are used unmodified under them.
+These keep their own licenses and are used unmodified:
+
+- DexKit (`org.luckypray:dexkit`) — LGPL-3.0 / Apache-2.0, © LuckyPray.
+- libxposed API (`io.github.libxposed:api`) — Apache-2.0, compile-only.
+- AndroidX (appcompat / fragment / preference) — Apache-2.0, compile-only.
+
+Release builds are signed with the AOSP testkey so they can update the published module; an
+unofficial build should not be presented as an official release.
 
 ## Open in Android Studio
 
