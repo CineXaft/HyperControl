@@ -31,6 +31,27 @@ supplied APK. It is debug-signed, so it cannot update the published module.
 The ARM64 host needed a QEMU wrapper for Google's x86_64 AAPT2; see `bin/aapt2-qemu` and
 `-Pandroid.aapt2FromMavenOverride=`. On an x86_64 host none of that is required.
 
+## Building from a fresh clone
+
+`local.properties` is ignored by git, so a clone has no SDK path. Create it first:
+
+```bash
+git clone <your fork> && cd <your fork>
+printf 'sdk.dir=/path/to/Android/Sdk\n' > local.properties
+./gradlew :app:assembleRelease     # add -Pandroid.aapt2FromMavenOverride=... on ARM64
+```
+
+Verified: a clean clone of this repository builds the release APK with no other setup
+(≈17 s on an 8-core ARM64 host, `BUILD SUCCESSFUL`).
+
+## Licensing and provenance
+
+Read [`NOTICE.md`](NOTICE.md) before publishing or redistributing anything from this repository.
+The Java sources are a decompilation of a third-party APK that came with no license, so this
+project deliberately ships **no** `LICENSE` file; [`LICENSE-STATUS.md`](LICENSE-STATUS.md) tracks
+the open question. The bundled dependencies (DexKit, libxposed API, AndroidX) do have licenses and
+are used unmodified under them.
+
 ## Open in Android Studio
 
 1. Open this folder as a Gradle project.
