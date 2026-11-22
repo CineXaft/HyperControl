@@ -28,6 +28,7 @@ public final class Catalog {
             row(context, preferenceCategory, "com.android.htmlviewer", "HTML 查看器");
             row(context, preferenceCategory, "com.android.providers.downloads", "下载管理");
             row(context, preferenceCategory, "com.xiaomi.xmsf", "hc_xms");
+            row(context, preferenceCategory, "com.tencent.mm", "微信");
             row(context, preferenceCategory, "hc.other", "其他");
             return;
         }
@@ -44,6 +45,14 @@ public final class Catalog {
             preference.setIconSpaceReserved(false);
             preference.setIntent(new Intent().setClassName("com.google.android.gms", "com.google.android.gms.app.settings.GoogleSettingsLink").setAction("android.intent.action.VIEW"));
             preferenceCategory.addPreference(preference);
+            return;
+        }
+        if ("com.tencent.mm".equals(str)) {
+            preferenceCategory.setTitle(appLabel(context, str));
+            feature(context, preferenceCategory, 17, "hc_wechat_pad", "hc_wechat_pad_desc");
+            feature(context, preferenceCategory, 18, "hc_wechat_select_original", "hc_wechat_select_original_desc");
+            feature(context, preferenceCategory, 20, "hc_wechat_no_typing", "hc_wechat_no_typing_desc");
+            feature(context, preferenceCategory, 21, "hc_wechat_hide_sns_ads", "hc_wechat_hide_sns_ads_desc");
             return;
         }
         if ("com.miui.securitycenter".equals(str)) {
@@ -88,10 +97,22 @@ public final class Catalog {
         preferenceGroup.addPreference(featureSwitch);
     }
 
+    private static String appLabel(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getApplicationInfo(packageName, 0)
+                    .loadLabel(context.getPackageManager()).toString();
+        } catch (Throwable ignored) {
+            return packageName;
+        }
+    }
+
     public static void row(Context context, PreferenceGroup preferenceGroup, String str, String str2) {
         androidx.preference.Preference preference;
         if (Compat.available(context, str)) {
             String strT = Strings.t(context, str2);
+            if (!str.startsWith("hc.") && !"android".equals(str)) {
+                strT = appLabel(context, str);
+            }
             if ("hc.kernel".equals(str) || "hc.power_menu_settings".equals(str) || "hc.ad_service_settings".equals(str)) {
                 preference = new Preference(context);
                 preference.setIconSpaceReserved(false);

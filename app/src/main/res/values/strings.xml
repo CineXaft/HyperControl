@@ -105,4 +105,12 @@
     <string name="hc_kernel_running">Flashing · do not reboot or force-stop HyperControl</string>
     <string name="hc_kernel_done">Updater exited successfully. Reboot manually when ready.</string>
     <string name="hc_kernel_error">Task failed · see output. No automatic retry or reboot.</string>
+    <string name="hc_wechat_pad">Pretend to be a tablet</string>
+    <string name="hc_wechat_pad_desc">Make WeChat identify this device as Lenovo TB-9707F so the same account can stay online on phone and tablet. Restart WeChat after changing.</string>
+    <string name="hc_wechat_select_original">Auto-select original image</string>
+    <string name="hc_wechat_select_original_desc">Preselect original quality in WeChat image/video send previews. Restart WeChat after changing.</string>
+<string name="hc_wechat_no_typing">Disable typing status</string>
+    <string name="hc_wechat_no_typing_desc">Suppress the WeChat typing notification while composing a message. Restart WeChat after changing.</string>
+    <string name="hc_wechat_hide_sns_ads">Hide Moments ads</string>
+    <string name="hc_wechat_hide_sns_ads_desc">Hide sponsored timeline cards after WeChat binds their feed item. Experimental; restart WeChat after changing.</string>
 </resources>

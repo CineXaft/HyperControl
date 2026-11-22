@@ -1,4 +1,4 @@
-# HyperControl 1.7.0
+# HyperControl 176
 
 [![Release](https://img.shields.io/github/v/release/CineXaft/HyperControl?label=release)](https://github.com/CineXaft/HyperControl/releases/latest)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
@@ -28,9 +28,16 @@ LSPosed metadata, laid out exactly as the APK is built from. The 1.4.8 baseline 
 the published APK (whose sources had to be decompiled back from the DEX); everything above it — see
 the changelog sections below — was written afterwards.
 
+## 176
+
+- Adds WeChat controls for tablet identity, original-photo selection, typing-status suppression, and hiding Moments ad cards.
+- Removes the unreliable automatic-view-original control.
+- Uses the host app label for target and Security Center page headings.
+- WeChat hooks are experimental and may require adjustment for other WeChat versions.
+
 ## Install
 
-1. Download `HyperControl_1.7.0.apk` from [Releases](https://github.com/CineXaft/HyperControl/releases/latest).
+1. Download `HyperControl_176.apk` from [Releases](https://github.com/CineXaft/HyperControl/releases/latest).
 2. Install it, enable the module in LSPosed, and select the apps you want it to act on
    (`com.android.systemui`, `com.miui.securitycenter`, `com.xiaomi.xmsf`, …).
 3. Open **HyperControl** from the Settings homepage.
@@ -42,7 +49,7 @@ their index when the host process starts, so restart that process after toggling
 
 - Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
 - LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- Current build: `1.7.0`, versionCode `10700`
+- Current build: `176`, versionCode `10707`
 - Baseline APK: `1.4.8`, versionCode `10408`; its SHA-256 is in
   [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
 - LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`

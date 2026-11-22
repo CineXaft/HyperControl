@@ -11,9 +11,9 @@ public final class State {
     private static volatile String mobileText;
 
     public static void bind(Context context) {
-        boolean[] zArr = new boolean[17];
+        boolean[] zArr = new boolean[22];
         ContentResolver contentResolver = context.getContentResolver();
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 22; i++) {
             try {
                 zArr[i] = Settings.Global.getInt(contentResolver, setting(key(i)), 0) == 1;
             } catch (Throwable th) {
@@ -80,6 +80,16 @@ public final class State {
                 return "securitycenter_intercept_bypass";
             case 16:
                 return "securitycenter_adb_verify_bypass";
+            case 17:
+                return "wechat_pad";
+            case 18:
+                return "wechat_auto_select_original";
+            case 19:
+                return "reserved_feature_19";
+            case 20:
+                return "wechat_disable_typing_status";
+            case 21:
+                return "wechat_hide_sns_ads";
             default:
                 throw new IllegalArgumentException();
         }

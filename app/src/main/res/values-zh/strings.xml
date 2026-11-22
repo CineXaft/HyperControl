@@ -103,4 +103,12 @@
     <string name="hc_kernel_running">刷写中 · 请勿重启或强停 HyperControl</string>
     <string name="hc_kernel_done">刷写脚本返回成功，可自行确认后重启。</string>
     <string name="hc_kernel_error">任务失败 · 查看日志，不自动重试或重启。</string>
+    <string name="hc_wechat_pad">伪装为平板设备</string>
+    <string name="hc_wechat_pad_desc">让微信识别为 Lenovo TB-9707F 平板，使同一账号可在手机与平板同时在线。切换后重启微信。</string>
+    <string name="hc_wechat_select_original">自动勾选原图</string>
+    <string name="hc_wechat_select_original_desc">发送图片或视频时预选原图；切换后重启微信。</string>
+<string name="hc_wechat_no_typing">禁止发送正在输入状态</string>
+    <string name="hc_wechat_no_typing_desc">输入消息时阻止微信发送“正在输入…”信号；切换后重启微信。</string>
+    <string name="hc_wechat_hide_sns_ads">屏蔽朋友圈广告</string>
+    <string name="hc_wechat_hide_sns_ads_desc">在微信绑定朋友圈条目后隐藏广告卡片。实验功能；切换后重启微信。</string>
 </resources>

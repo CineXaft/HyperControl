@@ -13,7 +13,13 @@ import com.android.settingslib.miuisettings.preference.PreferenceCategory;
 public final class SecurityCenterPage {
     public static void fill(Context context, PreferenceScreen preferenceScreen) {
         PreferenceCategory preferenceCategory = new PreferenceCategory(context);
-        preferenceCategory.setTitle(Strings.get(context, "hc_sec_title"));
+        try {
+            preferenceCategory.setTitle(context.getPackageManager()
+                    .getApplicationInfo("com.miui.securitycenter", 0)
+                    .loadLabel(context.getPackageManager()).toString());
+        } catch (Throwable ignored) {
+            preferenceCategory.setTitle(Strings.get(context, "hc_sec_title"));
+        }
         preferenceScreen.addPreference(preferenceCategory);
         Catalog.option(context, preferenceCategory, "securitycenter_score_zero",
                 "hc_sec_score", "hc_sec_score_desc");

@@ -9,8 +9,8 @@ android {
         minSdk = 35
         // The original APK metadata reports target 37; keep it and use a matching SDK for releases.
         targetSdk = 37
-        versionCode = 10700
-        versionName = "1.7.0"
+        versionCode = 10707
+        versionName = "176"
         ndk {
             // DexKit ships one native library per ABI; the module is arm64 only, like the ROM.
             abiFilters += "arm64-v8a"

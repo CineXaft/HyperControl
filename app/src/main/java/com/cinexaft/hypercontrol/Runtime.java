@@ -5,6 +5,9 @@ import android.content.Context;
 import android.util.Log;
 import io.github.libxposed.api.XposedInterface;
 import com.cinexaft.hypercontrol.securitycenter.SecurityCenter;
+import com.cinexaft.hypercontrol.wechatpad.WechatPad;
+import com.cinexaft.hypercontrol.wechat.WechatChatHooks;
+import com.cinexaft.hypercontrol.wechat.WechatSnsAds;
 import java.io.File;
 import java.lang.reflect.Method;
 
@@ -19,6 +22,7 @@ public final class Runtime {
     private static final String DOWNLOADS = "com.android.providers.downloads";
     private static final String XMSF = "com.xiaomi.xmsf";
     private static final String SECURITY_CENTER = "com.miui.securitycenter";
+    private static final String WECHAT = "com.tencent.mm";
 
     private static boolean installed;
 
@@ -37,6 +41,11 @@ public final class Runtime {
         if (loader == null) {
             return;
         }
+        if (WECHAT.equals(pkg)) {
+            if (State.enabled(17)) WechatPad.install(context, loader);
+            WechatChatHooks.install(context, loader);
+            if (State.enabled(21)) WechatSnsAds.install(context, loader);
+        }
         if (XMSF.equals(pkg) && State.enabled(13)) {
             XmsAuth.install(context, loader);
         } else if (SECURITY_CENTER.equals(pkg)) {
@@ -51,7 +60,8 @@ public final class Runtime {
                 || GUARD_PROVIDER.equals(packageName)
                 || DOWNLOADS.equals(packageName)
                 || XMSF.equals(packageName)
-                || SECURITY_CENTER.equals(packageName);
+                || SECURITY_CENTER.equals(packageName)
+                || WECHAT.equals(packageName);
     }
 
     private static void downloads(ClassLoader classLoader) {
