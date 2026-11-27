@@ -1,303 +1,132 @@
-# HyperControl 176
+# HyperControl
 
-[![Release](https://img.shields.io/github/v/release/CineXaft/HyperControl?label=release)](https://github.com/CineXaft/HyperControl/releases/latest)
-[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
+面向小米 HyperOS 的 Xposed 模块，将功能开关直接集成到系统设置中，无需独立桌面入口。
 
-An LSPosed module for Xiaomi HyperOS. Small, self-contained switches — no companion app, no
-service of its own; everything is injected into the system process that owns the behaviour.
+**当前版本：`1.0.0-202601127` · versionCode：`1` · 架构：`arm64-v8a`**
 
-**Status bar** — swap the mobile signal and Wi-Fi icons, hide the media island, hide data activity
-arrows, hide the Wi-Fi standard, replace the mobile network type with your own text, keep the lock
-screen clock expanded.
+## 功能
 
-**Security Center** — report a full security score, drop the permission-intercept countdown, skip
-ADB install verification.
+### 状态栏
 
-**System framework** — install old app versions, relax APK signature checks, remove the safe media
-volume limit, allow capturing protected content, fix Passkey.
+- 隐藏媒体灵动岛、移动数据活动指示器、Wi-Fi 活动指示器与 Wi-Fi 标准数字。
+- 连接 Wi-Fi 时隐藏移动网络类型。
+- 交换移动信号与 Wi-Fi 图标的位置。
+- 自定义移动网络类型文本。
 
-**Other** — prevent apps from being killed, stop cloud control / cloud updates, block the Xunlei
-download log directory, an AnyKernel kernel flasher (based on Horizon Kernel Flasher by LibXZR).
+### 系统框架
 
-Targets are found *structurally* through [DexKit](https://github.com/LuckyPray/DexKit) wherever the
-firmware renames its internals, so a ROM update does not silently break a switch — it just skips
-the one hook it can no longer identify and logs why.
+- 允许截屏受保护内容。
+- Passkey 兼容性修复。
+- 去除安全音量限制。
+- 核心破解 N：提供应用降级、签名与安装校验等高级开关，具体选项及风险以模块页面提示为准。
 
-This repository holds the full Android Studio project: the Java sources, resources, assets and
-LSPosed metadata, laid out exactly as the APK is built from. The 1.4.8 baseline was recovered from
-the published APK (whose sources had to be decompiled back from the DEX); everything above it — see
-the changelog sections below — was written afterwards.
+### 应用功能
 
-## 176
+- **微信**：平板设备伪装、选择图片时自动勾选原图、禁止发送正在输入状态、实验性屏蔽朋友圈广告。
+- **电量与性能**：禁止杀应用、停止云控同步。
+- **HTML 查看器**：禁用云控更新。
+- **下载管理**：阻止迅雷日志及相关目录创建。
+- **小米服务框架**：解锁焦点认证。
 
-- Adds WeChat controls for tablet identity, original-photo selection, typing-status suppression, and hiding Moments ad cards.
-- Removes the unreliable automatic-view-original control.
-- Uses the host app label for target and Security Center page headings.
-- WeChat hooks are experimental and may require adjustment for other WeChat versions.
+### 设置入口
 
-## Install
+提供部分系统隐藏页面、应用广告设置页面与 Google 设置的快捷入口。快捷入口是否可用取决于 ROM 和已安装应用，**不等同于自动关闭全部广告**。
 
-1. Download `HyperControl_176.apk` from [Releases](https://github.com/CineXaft/HyperControl/releases/latest).
-2. Install it, enable the module in LSPosed, and select the apps you want it to act on
-   (`com.android.systemui`, `com.miui.securitycenter`, `com.xiaomi.xmsf`, …).
-3. Open **HyperControl** from the Settings homepage.
+## 使用要求
 
-Requires HyperOS 2, `minSdk 35`, libxposed API 102. Switches whose target is found by DexKit build
-their index when the host process starts, so restart that process after toggling them.
+- 小米 HyperOS 系统；项目最低 Android 版本为 **Android 15 / API 35**。
+- **ARM64** 设备，当前 APK 仅包含 `arm64-v8a` 原生库。
+- 支持 **libxposed API 102** 的 Xposed 框架；仅支持旧版 API 的框架不适用。
+- 模块内停止应用、重启 SystemUI、重启设备等操作需要 Root 授权。
 
-## Identity and version
+模块依赖系统及应用内部实现，不能保证适配所有 HyperOS、微信或系统应用版本。DexKit 用于部分目标的定位，不代表 ROM 升级后一定兼容。
 
-- Application ID, Java namespace and resource package: `com.cinexaft.hypercontrol`
-- LSPosed entry: `com.cinexaft.hypercontrol.Entry` (see `META-INF/xposed/java_init.list`)
-- Current build: `176`, versionCode `10707`
-- Baseline APK: `1.4.8`, versionCode `10408`; its SHA-256 is in
-  [`reference/APK-SHA256.txt`](reference/APK-SHA256.txt)
-- LSPosed metadata/scope: `app/src/main/resources/META-INF/xposed/`
+## 安装与启用
 
-The supplied 1.4.8 APK shipped its Java code under `dev.local.hypercontrol` while its application
-ID was already `com.cinexaft.hypercontrol`. This reconstruction unifies both on
-`com.cinexaft.hypercontrol`, including the manifest component names, the Xposed entry point and
-the resource package that `Strings.get()` resolves by name.
+1. 从本仓库的 **Releases** 下载 `HyperControl-1.0.0-202601127-release.apk` 并安装。
+2. 在支持的 Xposed 管理器中启用 HyperControl，检查相关作用域。
+3. 重启设备，进入 **设置 → HyperControl**；入口位于“我的设备”之后。
+4. 按需开启功能，再按页面提示重启目标应用或设备。系统框架相关功能建议重启设备后验证。
 
-## Current build status
+模块没有独立的桌面启动 Activity。若设置中没有入口，请先检查模块是否加载、系统设置作用域及框架日志。
 
-Verified on an ARM64 Linux host with JDK 21, Android SDK Platform 35 and Gradle 8.11.1:
+### 作用域
 
-```bash
-JAVA_HOME=<jdk17+> ANDROID_HOME=<sdk> ./gradlew \
-  -Pandroid.aapt2FromMavenOverride=<aapt2 wrapper> :app:assembleDebug
+| 目标 | 包名 / 元数据标识 | 用途 |
+| --- | --- | --- |
+| 系统框架 | `system`（运行时包名 `android`） | 系统框架功能、Passkey |
+| 系统设置 | `com.android.settings` | 模块入口与配置、Passkey |
+| 系统界面 | `com.android.systemui` | 状态栏相关功能 |
+| 电量与性能 | `com.miui.powerkeeper` | 后台与云控 |
+| HTML 查看器 | `com.android.htmlviewer` | 云控更新 |
+| 下载管理 | `com.android.providers.downloads` | 迅雷日志目录 |
+| 手机管家 | `com.miui.securitycenter` | Passkey 相关适配 |
+| 扫一扫 | `com.xiaomi.scanner` | Passkey 相关适配 |
+| 小米服务框架 | `com.xiaomi.xmsf` | 焦点认证 |
+| 微信 | `com.tencent.mm` | 微信功能 |
+
+Passkey 功能需同时启用**系统框架、系统设置、手机管家、扫一扫**四个作用域，并重启设备；相关 Google 凭据功能还依赖可用的 Google Play 服务。
+
+## 风险与限制
+
+- 建议先备份数据，一次只调整少量开关，保留在恢复环境中停用模块的手段。
+- 签名、共享用户、安装校验等开关会降低系统安全性，不建议无差别全部开启。
+- “允许系统应用使用隐藏 API”在页面中已明确警告：**小米 / Redmi 勿开，可能卡开机**。
+- 禁止杀应用可能增加耗电；取消安全音量限制后请自行控制音量。
+- 微信适配受客户端版本影响，朋友圈广告屏蔽为实验功能，不保证全部生效。
+- 本次版本号重置为 `1`。从更高 versionCode 的旧版本更新时，系统可能拒绝覆盖安装；请先备份，再自行决定是否卸载旧版。
+- 本次 Release APK 使用 **AOSP testkey** 签名，属于公开测试密钥，不应将其当作专属的发布身份或安全凭据；旧版本签名不一致时也可能无法覆盖安装。
+
+## 从源码构建
+
+### 工具链
+
+- JDK 21。
+- Android SDK Platform 35、Build Tools 35.0.0。
+- Gradle Wrapper 8.11.1、Android Gradle Plugin 8.9.2、Kotlin 2.1.20。
+- 当前配置：`compileSdk = 35`、`minSdk = 35`、`targetSdk = 37`。
+
+设置 `ANDROID_HOME`，或在未纳入版本控制的 `local.properties` 中填写 SDK 路径。首次构建需要联网下载依赖。
+
+仓库当前的 `gradlew` 包含本地 JDK 路径；在其他机器上可以直接使用 Wrapper 主类，避免依赖该路径：
+
+```sh
+export JAVA_HOME=/path/to/jdk-21
+export ANDROID_HOME=/path/to/android-sdk
+"$JAVA_HOME/bin/java" -classpath gradle/wrapper/gradle-wrapper.jar \
+  org.gradle.wrapper.GradleWrapperMain :app:assembleRelease
 ```
 
-`BUILD SUCCESSFUL` - the debug APK contains all 58 classes from the original DEX (plus
-Gradle-generated `R` classes), and its Xposed metadata, assets and manifest components match the
-supplied APK. It is debug-signed, so it cannot update the published module.
+ARM64 Linux 主机需要可执行的 AAPT2，必要时追加 `-Pandroid.aapt2FromMavenOverride=/path/to/aapt2-wrapper`。
 
-The ARM64 host needed a QEMU wrapper for Google's x86_64 AAPT2; see `bin/aapt2-qemu` and
-`-Pandroid.aapt2FromMavenOverride=`. On an x86_64 host none of that is required.
+默认 Release 产物位于 `app/build/outputs/apk/release/`，未配置发布签名；自行分发前请使用自己的密钥完成对齐、签名及验证。不要把私钥、访问令牌或 `local.properties` 提交到仓库。
 
-## Building from a fresh clone
+## 源码结构
 
-`local.properties` is ignored by git, so a clone has no SDK path. Create it first:
-
-```bash
-git clone <your fork> && cd <your fork>
-printf 'sdk.dir=/path/to/Android/Sdk\n' > local.properties
-./gradlew :app:assembleRelease     # add -Pandroid.aapt2FromMavenOverride=... on ARM64
+```text
+app/src/main/java/com/cinexaft/hypercontrol/
+├── base/                   模块入口、设置集成、配置页面与重启服务
+├── hook/
+│   ├── downloads/          下载管理
+│   ├── html/               HTML 查看器
+│   ├── power/              后台与云控
+│   ├── systemframework/    系统框架、Passkey 与核心破解
+│   ├── systemui/           状态栏
+│   ├── wechat/             微信
+│   └── xms/                小米服务框架
+└── ui/                     功能页面与快捷入口
 ```
 
-Verified: a clean clone of this repository builds the release APK with no other setup
-(≈17 s on an 8-core ARM64 host, `BUILD SUCCESSFUL`).
+- 应用 ID：`com.cinexaft.hypercontrol`
+- Xposed 入口：`com.cinexaft.hypercontrol.base.Entry`
+- 模块元数据：`app/src/main/resources/META-INF/xposed/`
+- `device-stubs/`：编译所需的宿主接口桩。
+- 功能配置主要存储于 `Settings.Global`，键名前缀为 `hypercontrol_`。
 
-## License
+## 问题反馈
 
-Copyright (C) 2023-2026 CineXaft.
+反馈时请提供设备型号、ROM / Android 版本、Xposed 框架及 API 版本、相关应用版本、复现步骤和日志。提交日志前请移除账号、令牌及其他个人信息。构建成功不代表所有功能已完成实机验证。
 
-Licensed under the GNU General Public License v3.0 or later — see [`LICENSE`](LICENSE). In short:
-you may use, study, share and modify this module, but a distributed modified version must also be
-GPL-3.0 and ship its sources.
+## 许可证
 
-Third-party components keep their own licenses and are used unmodified:
-
-- DexKit (`org.luckypray:dexkit`) — LGPL-3.0 / Apache-2.0, © LuckyPray.
-- libxposed API (`io.github.libxposed:api`) — Apache-2.0, compile-only.
-- AndroidX (appcompat / fragment / preference) — Apache-2.0, compile-only.
-
-## Open in Android Studio
-
-1. Open this folder as a Gradle project.
-2. Use JDK 17 or newer and install Android SDK Platform 35 (or the platform required by the build).
-3. Let Android Studio download the Gradle and Maven dependencies.
-4. Select the `app` configuration to compile/debug.
-
-The APK metadata specifies target SDK 37 while the initial project compile SDK is 35. The supplied APK was produced with a newer SDK than the recovered local SDK; a release build should use the matching SDK/AGP combo rather than quietly changing target behavior.
-
-`device-stubs` provides compile-only stand-ins for private Android/MIUI classes (SettingsPreferenceFragment, MIUI SettingsLib preferences, hidden framework APIs and MIUI AlertDialog). These are only for editor/compiler resolution. The real OS supplies those classes on the supported Xiaomi/Redmi ROMs. **Never package or ship the stubs as runtime code.**
-
-## What this build changed
-
-1.4.9 drops the Security Center feature. Its three hooks (score zeroing, permission-interception
-bypass, ADB-verify bypass) depended on private Security Center internals that change between
-releases, and could not be kept working across versions, so the whole `securitycenter` package,
-its settings page and its strings are gone. `com.miui.securitycenter` stays in `scope.list` only
-because the passkey feature still needs `Settings.Secure` writes from that process.
-
-Also removed as dead weight:
-
-- `core.R` carried 100 hard-coded resource id constants copied out of the resource table; nothing
-  referenced them (the flasher uses `android.R`), so the whole inner class is gone.
-- The Security Center strings, their `public.xml` ids, and the catalog row/route that opened them.
-
-Shared plumbing now lives in `Hooks`:
-
-| helper | replaces |
-|---|---|
-| `byNameCount(Class, name, count)` | `ClockExpand.m()`, per-class ad-hoc lookup loops |
-| `bySignature(loader, class, name, params, returnType)` | `Runtime.hook()`'s load/lookup/verify block |
-| `install(method, hooker[, tag])` | `ClockExpand.h()` and repeated deopt+hook+log triples |
-| `replaceArg(args, index, value)` | hand-built `new Object[]{...}` arrays in `ClockHook` (one of which hard-coded `new Object[5]`) |
-
-Hook overhead work in the hot paths:
-
-- `Audit.hit()` was `synchronized`, so every interception inside PackageManagerService took a
-  global monitor. It now uses `AtomicIntegerArray` and keeps the same power-of-two logging.
-- `NHook.intercept()` no longer reads a `ThreadLocal` on every call. `Engine.guarding` is a plain
-  volatile int that is zero unless some thread is inside `Shared.capable()`, so the common path is
-  one int compare. The ThreadLocal is still consulted when the counter is non-zero, so the
-  re-entrancy semantics are unchanged.
-- `Runtime.install()`'s five-way boolean OR chain became a `handled()` predicate plus a switch;
-  a signature mismatch now skips one hook with a warning instead of aborting the rest.
-
-### 1.5.0 — status bar icon swap
-
-`SwapHook` adds the "Swap mobile and Wi-Fi icons" switch under *System UI*. It does not touch
-layout code: HyperOS lays the icon container out from the right edge in reverse child order, so
-the child order *is* the visual order and exchanging the two children is enough. The exchange is
-posted after the container reports a new child (its `onViewAdded`), which is the only point where
-both views are guaranteed to exist, and it is idempotent — after the first swap the check sees
-Wi-Fi at the lower index and does nothing. A firmware that renames or drops the container simply
-logs a warning and leaves the status bar alone.
-
-### 1.6.0 — DexKit and the focus-auth unlock
-
-`com.xiaomi.xmsf` is now a hook target, and its one switch needs a DEX index: the auth module that
-ships with this ROM is fully renamed by R8 (`com.xiaomi.xms.auth.a … n`), so no class or method name
-from the original module survives. `Dex.java` owns the index — it unpacks `libdexkit.so` from this
-APK into the host's code cache once per process, loads it by absolute path, and keeps a
-`DexKitBridge` per process. Nothing is loaded unless the switch is already on when the process
-starts, which is why changing it needs a restart of the service process.
-
-`XmsAuth.java` then looks for the session class structurally: the class whose methods reference the
-literal `"Auth is successful"`, and inside it the zero-argument and one-argument methods that both
-return a `Bundle`. Intercepting the one-argument method and returning the zero-argument result makes
-a failed authentication report success. The error object is only read (for the log line) — nothing
-downstream sees it once the result is replaced. If the success builder throws (a session that never
-reached a usable state), the hook falls back to the original error instead of converting it into a
-crash.
-
-Verified on the target device by running the module's exact query through `app_process` against the
-installed `auth-master.apk`: the search returns `com.xiaomi.xms.auth.i` with `b(int param)`,
-`c(three params, ignored)` and `h()`, i.e. the error builder, an unrelated helper and the success
-builder. The same run used the R8-minified release APK as its classpath, so the keep rules for
-DexKit, flatbuffers and the Kotlin stdlib are proven sufficient.
-
-Cost of the index, measured: the APK goes from 79 KB to 350 KB (dex 89 KB -> 281 KB plus a 395 KB
-arm64 native engine, both deflated), and the index itself takes ~30 ms to build over three dex
-files. The dex side is dominated by DexKit and the Kotlin runtime it is written in, not by this
-module's own code (which stayed at ~90 KB).
-
-The first version of these keep rules pinned `org.luckypray.dexkit.**` with `-keep`, which left all
-648 classes in place - 451 of them DexKit's query DSL that this module never builds. `-keepnames`
-(`-keep,allowshrinking`) keeps every *name* while letting R8 delete the unreachable classes, which
-is what JNI and DexKit's own reflection actually require:
-
-| rule | why |
-|---|---|
-| `-keepnames org.luckypray.dexkit.**` | the .so exports `Java_org_luckypray_dexkit_DexKitBridge_nativeXxx`, and DexKit's helpers walk their own data classes by reflection |
-| `-keepnames com.google.flatbuffers.**` | same, for the schema readers behind the query byte arrays |
-| `-keepclasseswithmembernames` for `native` | belt and braces for the JNI entry points |
-
-Result: 648 -> 274 classes, dex 887 KB -> 281 KB, APK 514 KB -> 350 KB, with no behavioural
-difference - verified by rerunning the three queries against the *shrunk* dex through
-`app_process`, which is the same code path the module takes at runtime.
-
-### 1.7.0 — Security Center, this time found by structure
-
-The three Security Center features are back, but nothing about them is pinned to a release any
-more. The 1.4.x implementation hard-coded `ScoreManager.q()/o()`, scraped a `Log.d` message to
-discover the score method, hooked every `String.equals` in the process, and guessed at
-`InterceptBaseFragment`'s `protected ()int` methods; all four guesses are wrong on this ROM
-(`ScoreManager.o()` is still private, `f0()` became the layout id, and the ADB activity now has a
-device/region early exit). `securitycenter/SecurityCenter.java` re-derives all of it:
-
-| switch | how the target is found | what it does |
-|---|---|---|
-| Zero predicted deduction | the method that uses the literal `getMinusPredictScore` | returns 0, so `100 - clamp(...)` stays at 100 |
-| Skip interception countdown | every `protected`, non-abstract, no-argument `int` method in the `InterceptBaseFragment` hierarchy | returns 0, so the dialog button is enabled immediately |
-| Skip ADB install verification | the `AdbInstallVerifyActivity` subclass, its `onCreate(Bundle)` | calls the parent `onCreate` and `finish()`, skipping the account and network round trip |
-
-Two details worth keeping in mind if these are ever touched again:
-
-- The layout id is also an `int`, so the `protected` filter is what separates `c0()` (countdown,
-  protected) from `f0()` (layout, public). Dropping that filter inflates the wrong resource.
-- The name filter also matches `InterceptBaseFragment$a/$b` and `AdbInstallVerifyActivity$a/$b`, so
-  inner classes are skipped explicitly.
-
-The old `String.equals` hook is gone: the ADB activity is now left entirely, which is both less
-invasive and cheaper, since no string comparison in the Security Center process pays for it.
-
-Verified by running these exact queries through `app_process` against the installed
-`MIUISecurityCenter.apk` (11.1.0, 3 dex, 61 MB): score resolves to `ScoreManager.o() ()int` in
-31 ms, the fragment search returns 5 classes of which `c0()` is `protected` (0x4) and `f0()` is
-`public`/`abstract` (0x401/0x1), and the ADB class exposes `onCreate(Bundle)`. The index is only
-built when at least one of the three switches is on, and it is shared with the XMS feature.
-
-## Dex layout, R8 and compression
-
-Two different things were behind the earlier "six dex" and "128 KB":
-
-1. **Dex count.** `assembleDebug` dexes project classes in incremental buckets, so it emits six
-   `classes*.dex` files. `assembleRelease` runs R8 and emits exactly **one** `classes.dex`.
-2. **Dex compression.** AGP 8 stores `classes.dex` uncompressed (fast install, bigger file). The
-   original module shipped it deflated, so `packaging { dex { useLegacyPackaging = true } }` is set
-   here to match. `resources.arsc` stays `Stored` — Android 11+ (API 30) requires it uncompressed
-   and 4-byte aligned.
-
-Measured on this project:
-
-| build | dex files | classes.dex in APK | APK |
-|---|---|---|---|
-| `assembleDebug` | 6 | stored | 178 KB, debug-signed |
-| `assembleRelease` before compression | 1 | 91,376 B stored | 119,291 B |
-| `assembleRelease` final (R8 + deflated dex) | 1 | 43,369 B deflated | 71,283 B → **79,032 B signed** |
-| supplied original APK | 1 | 40,615 B deflated | 74,748 B |
-
-`isShrinkResources = true` is enabled, and `app/src/main/res/raw/keep.xml` keeps `@string/*`
-because every UI string is resolved at runtime through
-`Resources.getIdentifier(name, "string", "dev.local.hypercontrol")`. Verified after the build:
-all 100 default and 98 `zh` string names still exist, with none missing and none extra.
-
-R8 renames 37 of the 43 remaining classes (`a.a`, `b.c`, ...). Six keep their original names
-because the name itself is the contract, and none of those can be rewritten by R8:
-
-| kept name | why |
-|---|---|
-| `...hypercontrol.Entry` | listed in `META-INF/xposed/java_init.list`, a resource file R8 cannot edit |
-| `...ui.NativeScreen` | passed to Settings as a fragment-name string; `Hook` compares and resolves it |
-| `...ui.PageBridge` | loaded via `ClassLoader.loadClass("...ui.PageBridge")` |
-| `...RestartProvider` | declared in `AndroidManifest.xml` |
-| `...flasher.KernelProvider` | declared in `AndroidManifest.xml` |
-| `...flasher.FlashService` | declared in `AndroidManifest.xml` |
-
-`-adaptclassstrings` was tried and rejected: R8 left the class-name literals untouched while still
-renaming the classes, which would have made `loadClass` fail at runtime. The rules file documents
-that finding.
-
-`core.*` no longer needs pinning because it is no longer looked up by name — the old
-`Engine.verifyLinkedClasses()` built class names by string concatenation, which no obfuscator can
-follow; it now iterates real `Class` objects, so R8 can rename them.
-
-## Signing
-
-Release output is unsigned. The supplied APK is signed with the public AOSP test key
-(`SHA-256 a40da80a59d170caa950cf15c18c454d47a39b26989d8b640ecd745ba71bf5dc`), so a rebuild can be
-signed with the same key and still be signature-compatible:
-
-```bash
-apksigner sign --key testkey.pk8 --cert testkey.x509.pem \
-  --out HyperControl_1.4.8-signed.apk app-release-unsigned.apk
-```
-
-The resulting APK verifies with APK Signature Scheme v3 (the original is v3-only as well, since
-minSdk is 35). Its certificate digest matches the supplied APK.
-
-## Recovery fidelity
-
-Java files under `app/src/main/java` were decompiled from DEX using JADX 1.5.6. This is readable recovered code, not the original authored source. JADX may reconstruct control flow imperfectly; names belonging to platform code may also be obfuscated. Keep the original smali/APK as audit reference when modifying hooks. APK metadata/assets/resources were decoded with Apktool 3.0.3.
-
-A project that opens in Android Studio is not automatically a behavior-identical rebuild. The original APK's private signing key was not supplied; a new build cannot be installed as a signature-compatible update unless the owner's key is available. Verify the merged manifest, packaged Xposed metadata, resources, providers, flash service and target package IDs for every release.
-
-## GitHub publication
-
-No license has been chosen. Before making a public repository, confirm you have redistribution rights and select a license. Do not assume a license from the fact that an APK was provided. The original APK is ignored by Git (`*.apk`) and should not be committed.
-
-The module contains system-server hooks, package verification modifications, Security Center hooks and a root kernel flasher. Review changes and test on a recoverable test device before release.
+GNU General Public License v3.0，详见 `LICENSE`。
