@@ -17,5 +17,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "HyperControl-Recovered-1.4.8"
+rootProject.name = "HyperControl"
 include(":app", ":device-stubs")

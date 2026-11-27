@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <queries>
         <package android:name="com.android.providers.downloads"/>
-        <package android:name="com.miui.guardprovider"/>
         <package android:name="com.miui.powerkeeper"/>
+        <package android:name="com.tencent.mm"/>
+        <package android:name="com.xiaomi.xmsf"/>
         <package android:name="com.android.htmlviewer"/>
         <intent>
             <action android:name="android.intent.action.MAIN"/>
@@ -17,10 +15,6 @@
         <package android:name="com.google.android.gms"/>
     </queries>
     <application android:allowBackup="false" android:hasCode="true" android:label="HyperControl">
-        <provider android:authorities="com.cinexaft.hypercontrol.flasher" android:exported="true" android:grantUriPermissions="false" android:name="com.cinexaft.hypercontrol.flasher.KernelProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS" android:process=":flasher"/>
-        <service android:exported="false" android:foregroundServiceType="specialUse" android:name="com.cinexaft.hypercontrol.flasher.FlashService" android:process=":flasher">
-            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-confirmed AnyKernel ZIP installation using root; must complete without interruption"/>
-        </service>
-        <provider android:authorities="com.cinexaft.hypercontrol.restart" android:exported="true" android:grantUriPermissions="false" android:name="com.cinexaft.hypercontrol.RestartProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS"/>
+        <provider android:authorities="com.cinexaft.hypercontrol.restart" android:exported="true" android:grantUriPermissions="false" android:name="com.cinexaft.hypercontrol.base.RestartProvider" android:permission="android.permission.WRITE_SECURE_SETTINGS"/>
     </application>
 </manifest>

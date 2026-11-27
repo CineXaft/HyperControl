@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  All UI strings are resolved at runtime by name:
-      Resources.getIdentifier(name, "string", "com.cinexaft.hypercontrol")
-  The resource shrinker cannot see those references, so without this file it would delete every
-  string. Keep the whole string table; nothing else in this module is a resolvable resource.
--->
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@string/*" />

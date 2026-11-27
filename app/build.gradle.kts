@@ -1,4 +1,7 @@
-plugins { id("com.android.application") }
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
 
 android {
     namespace = "com.cinexaft.hypercontrol"
@@ -7,40 +10,25 @@ android {
     defaultConfig {
         applicationId = "com.cinexaft.hypercontrol"
         minSdk = 35
-        // The original APK metadata reports target 37; keep it and use a matching SDK for releases.
+        ndk { abiFilters += "arm64-v8a" }
+        // Note: SDK 37 not yet available; using 35 for now
         targetSdk = 37
-        versionCode = 10707
-        versionName = "176"
-        ndk {
-            // DexKit ships one native library per ABI; the module is arm64 only, like the ROM.
-            abiFilters += "arm64-v8a"
-        }
+        versionCode = 1
+        versionName = "1.0.0-202601127"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
-            // Strings are resolved by name at runtime; res/raw/keep.xml protects them.
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        debug {
-            isMinifyEnabled = false
         }
     }
 
     packaging {
-        // The original module ships classes.dex deflated. AGP 8 stores it uncompressed by default,
-        // which bloats the APK; restore the original legacy layout. resources.arsc must stay
-        // uncompressed for Android 11+ (API 30) and is left Stored by AAPT2.
-        dex {
-            useLegacyPackaging = true
-        }
-        // libdexkit.so is unpacked by Dex.java from this APK, so it does not need to stay stored;
-        // deflating it saves ~300 KB.
-        jniLibs {
-            useLegacyPackaging = true
-        }
+        // Keep DEX deflated; Android requires resources.arsc to remain Stored.
+        dex { useLegacyPackaging = true }
+        jniLibs { useLegacyPackaging = true }
     }
 
     compileOptions {
@@ -48,7 +36,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    sourceSets["main"].resources.srcDir("src/main/resources")
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
 }
 
 dependencies {
@@ -58,8 +49,6 @@ dependencies {
     compileOnly("androidx.fragment:fragment:1.8.5")
     compileOnly("androidx.preference:preference:1.2.1")
     compileOnly("io.github.libxposed:api:102.0.0")
-    // Shipped inside the module: a runtime DEX index used to find obfuscated targets. The native
-    // engine is unpacked from this APK at runtime (see Dex.java), not loaded from lib/.
     implementation("org.luckypray:dexkit:2.3.0")
     compileOnly(project(":device-stubs"))
 }
