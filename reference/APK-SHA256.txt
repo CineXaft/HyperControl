@@ -1,6 +1,0 @@
-Input file: HyperControl_1.4.8.apk
-SHA-256: b48b48b400af6533481901e79d9ff89fc257043b4e2a20116d04aad958358a8d
-APK package/application ID: com.cinexaft.hypercontrol
-DEX Java package and Xposed entry: dev.local.hypercontrol.Entry
-Version: 1.4.8 (versionCode 10408)
-Recovery tools: JADX 1.5.6; Apktool 3.0.3
