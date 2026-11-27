@@ -1,43 +1,57 @@
 # HyperControl - R8 configuration
-#
-# NOTE: R8 exposes -adaptclassstrings, but it does NOT rewrite the module's own class-name
-# literals here (verified: after enabling it the literals stayed unchanged while the classes were
-# renamed, which would break loadClass at runtime). Those two classes are therefore pinned by name
-# instead. Everything else is obfuscated.
+# Preserve the exact externally resolved contracts, not every implementation member.
+# These class names are read by the Settings host, Xposed metadata or Android manifest.
 
-# Settings resolves this fragment through a name string and SettingsHook returns the
-# class object, so the literal "com.cinexaft.hypercontrol.base.NativeScreen" must stay resolvable.
--keep class com.cinexaft.hypercontrol.base.NativeScreen { *; }
+# FragmentFactory resolves this class by name and constructs it reflectively.
+# Preserve lifecycle methods invoked by Settings/AndroidX, including the private host API.
+-keep,allowoptimization class com.cinexaft.hypercontrol.base.NativeScreen {
+    public <init>();
+    public void onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater);
+    public int getMetricsCategory();
+    public void onCreatePreferences(android.os.Bundle, java.lang.String);
+    public boolean onPreferenceTreeClick(androidx.preference.PreferenceScreen, androidx.preference.Preference);
+    public void onStart();
+}
 
-# Loaded through ClassLoader.loadClass("com.cinexaft.hypercontrol.base.PageBridge").
--keep class com.cinexaft.hypercontrol.base.PageBridge { *; }
+# SettingsHook.loadScreen() resolves this exact static method by reflection.
+-keep,allowoptimization class com.cinexaft.hypercontrol.base.PageBridge {
+    public static void show(android.app.Activity, android.os.Bundle, java.lang.CharSequence);
+}
 
-# LSPosed reads the entry class name from META-INF/xposed/java_init.list, a resource file that
-# R8 cannot rewrite. This one name must survive obfuscation.
--keep class com.cinexaft.hypercontrol.base.Entry { *; }
+# META-INF/xposed/java_init.list names the module; the framework invokes these callbacks.
+-keep,allowoptimization class com.cinexaft.hypercontrol.base.Entry {
+    public <init>();
+    public void onModuleLoaded(io.github.libxposed.api.XposedModuleInterface$ModuleLoadedParam);
+    public void onPackageLoaded(io.github.libxposed.api.XposedModuleInterface$PackageLoadedParam);
+    public void onPackageReady(io.github.libxposed.api.XposedModuleInterface$PackageReadyParam);
+    public void onSystemServerStarting(io.github.libxposed.api.XposedModuleInterface$SystemServerStartingParam);
+}
 
-# Components referenced from AndroidManifest.xml. The manifest is binary XML produced by AAPT2
-# and is not rewritten by R8, so these names must also survive.
--keep class com.cinexaft.hypercontrol.base.RestartProvider { *; }
+# Android instantiates the manifest provider and invokes its ContentProvider callbacks.
+-keep,allowoptimization class com.cinexaft.hypercontrol.base.RestartProvider {
+    public <init>();
+    public boolean onCreate();
+    public android.os.Bundle call(java.lang.String, java.lang.String, android.os.Bundle);
+    public android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String);
+    public java.lang.String getType(android.net.Uri);
+    public android.net.Uri insert(android.net.Uri, android.content.ContentValues);
+    public int delete(android.net.Uri, java.lang.String, java.lang.String[]);
+    public int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]);
+}
 
-# XposedInterface$Hooker is a *library* interface, so R8 already cannot rename intercept().
-# Stating it explicitly documents the contract and guards against a future API change.
+# Keep the Hooker callback contract. Do not relax JNI contracts to save space.
 -keepclassmembers class * implements io.github.libxposed.api.XposedInterface$Hooker {
     java.lang.Object intercept(io.github.libxposed.api.XposedInterface$Chain);
 }
-
-# LSPosed uses annotations/enclosing metadata when reporting hook failures.
--keepattributes *Annotation*, InnerClasses, EnclosingMethod, Signature
-
-
-# Keep JNI entry points from being renamed/removed; allow DexKit and FlatBuffers classes
-# themselves to shrink and obfuscate. DexKit 2.3.0 uses serialized/native IDs, not Java names.
 -keepclasseswithmembers,includedescriptorclasses class org.luckypray.dexkit.** {
     native <methods>;
 }
-# TabletHook compares this host parameter type through Continuation::class.java.name.
+
+# WechatPad compares a host coroutine parameter against this exact type name.
 -keepnames interface kotlin.coroutines.Continuation
--keep class kotlin.Metadata { *; }
--keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# No runtime code reads kotlin.Metadata. Let R8 remove it instead of pinning it.
+# The default proguard-android-optimize.txt already preserves runtime annotations,
+# Signature, InnerClasses and EnclosingMethod; do not add a blanket *Annotation* rule.
 -dontwarn kotlin.**
 -dontwarn org.jetbrains.annotations.**

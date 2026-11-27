@@ -26,6 +26,12 @@ android {
     }
 
     packaging {
+        // No full Kotlin reflection is used; omit its built-ins and build-time metadata.
+        resources {
+            excludes += "kotlin/*.kotlin_builtins"
+            excludes += "kotlin/**/*.kotlin_builtins"
+            excludes += "kotlin-tooling-metadata.json"
+        }
         // Keep DEX deflated; Android requires resources.arsc to remain Stored.
         dex { useLegacyPackaging = true }
         jniLibs { useLegacyPackaging = true }
