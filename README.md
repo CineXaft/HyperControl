@@ -2,7 +2,7 @@
 
 面向小米 HyperOS 的 Xposed 模块，将功能开关直接集成到系统设置中，无需独立桌面入口。
 
-**当前版本：`1.0.1` · versionCode：`2` · 架构：`arm64-v8a`**
+**当前版本：`1.0.2` · versionCode：`3` · 架构：`arm64-v8a`**
 
 ## 功能
 
@@ -12,6 +12,10 @@
 - 连接 Wi-Fi 时隐藏移动网络类型。
 - 交换移动信号与 Wi-Fi 图标的位置。
 - 自定义移动网络类型文本。
+
+### 锁屏
+
+- 禁用通知到达时锁屏大时钟折叠。
 
 ### 系统框架
 
@@ -43,10 +47,10 @@
 
 ## 安装与启用
 
-1. 从本仓库的 **Releases** 下载 `HyperControl-1.0.1-release.apk` 并安装。
+1. 从本仓库的 **Releases** 下载 `HyperControl-1.0.2-release.apk` 并安装。
 2. 在支持的 Xposed 管理器中启用 HyperControl，检查相关作用域。
 3. 重启设备，进入 **设置 → HyperControl**；入口位于“我的设备”之后。
-4. 按需开启功能，再按页面提示重启目标应用或设备。系统框架相关功能建议重启设备后验证。
+4. 按需开启功能，再使用页面右上角的重启按钮，按提示重启目标应用或设备。系统框架相关功能建议重启设备后验证。
 
 模块没有独立的桌面启动 Activity。若设置中没有入口，请先检查模块是否加载、系统设置作用域及框架日志。
 
@@ -56,7 +60,7 @@
 | --- | --- | --- |
 | 系统框架 | `system`（运行时包名 `android`） | 系统框架功能、Passkey |
 | 系统设置 | `com.android.settings` | 模块入口与配置、Passkey |
-| 系统界面 | `com.android.systemui` | 状态栏相关功能 |
+| 系统界面 | `com.android.systemui` | 状态栏与锁屏功能 |
 | 电量与性能 | `com.miui.powerkeeper` | 后台与云控 |
 | HTML 查看器 | `com.android.htmlviewer` | 云控更新 |
 | 下载管理 | `com.android.providers.downloads` | 迅雷日志目录 |
@@ -74,7 +78,7 @@ Passkey 功能需同时启用**系统框架、系统设置、手机管家、扫�
 - “允许系统应用使用隐藏 API”在页面中已明确警告：**小米 / Redmi 勿开，可能卡开机**。
 - 禁止杀应用可能增加耗电；取消安全音量限制后请自行控制音量。
 - 微信适配受客户端版本影响，朋友圈广告屏蔽为实验功能，不保证全部生效。
-- 本版本 versionCode 为 `2`，可覆盖 versionCode 为 `1` 的上一版；不同签名的旧安装仍可能需要先卸载。
+- 本版本 versionCode 为 `3`，可覆盖 versionCode 为 `2` 的 1.0.1 版本；不同签名的旧安装仍可能需要先卸载。
 - 本次 Release APK 使用 **AOSP testkey** 签名，属于公开测试密钥，不应将其当作专属的发布身份或安全凭据；旧版本签名不一致时也可能无法覆盖安装。
 
 ## 从源码构建
@@ -111,7 +115,7 @@ app/src/main/java/com/cinexaft/hypercontrol/
 │   ├── html/               HTML 查看器
 │   ├── power/              后台与云控
 │   ├── systemframework/    系统框架、Passkey 与核心破解
-│   ├── systemui/           状态栏
+│   ├── systemui/           状态栏与锁屏
 │   ├── wechat/             微信
 │   └── xms/                小米服务框架
 └── ui/                     功能页面与快捷入口

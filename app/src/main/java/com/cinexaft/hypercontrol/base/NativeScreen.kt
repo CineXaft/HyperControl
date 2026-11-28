@@ -2,39 +2,77 @@ package com.cinexaft.hypercontrol.base
 
 import android.app.Activity; import android.content.ActivityNotFoundException; import android.content.Context; import android.content.Intent; import android.content.pm.ApplicationInfo; import android.content.pm.PackageManager
 import android.graphics.Bitmap; import android.graphics.Canvas; import android.graphics.drawable.BitmapDrawable; import android.net.Uri; import android.os.Bundle; import android.os.Handler
-import android.os.Looper; import android.provider.Settings; import android.util.Log; import android.util.TypedValue; import android.view.Menu; import android.view.MenuInflater
-import android.view.MenuItem; import android.widget.Toast; import androidx.preference.Preference as AndroidPreference; import androidx.preference.PreferenceGroup; import androidx.preference.PreferenceManager; import androidx.preference.PreferenceScreen
+import android.os.Looper; import android.provider.Settings; import android.util.Log; import android.util.TypedValue; import android.widget.ImageView; import android.widget.Toast; import androidx.preference.Preference as AndroidPreference; import androidx.preference.PreferenceGroup; import androidx.preference.PreferenceManager; import androidx.preference.PreferenceScreen
 import com.android.settings.SettingsPreferenceFragment; import com.android.settingslib.miuisettings.preference.IconPreference; import com.android.settingslib.miuisettings.preference.Preference; import com.android.settingslib.miuisettings.preference.PreferenceCategory; import com.android.settingslib.miuisettings.preference.SwitchPreference; import com.cinexaft.hypercontrol.R
 import com.cinexaft.hypercontrol.base.Entry.State; import com.cinexaft.hypercontrol.base.Entry.Targets.*; import com.cinexaft.hypercontrol.base.PageBridge.Strings; import com.cinexaft.hypercontrol.ui.AppPages; import com.cinexaft.hypercontrol.ui.ShortcutPages; import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean; import miuix.appcompat.app.AlertDialog
+import java.util.concurrent.atomic.AtomicBoolean; import miuix.appcompat.app.ActionBar; import miuix.appcompat.app.ActionBarTransitionListener; import miuix.appcompat.app.AlertDialog; import miuix.appcompat.app.AppCompatActivity
+import miuix.appcompat.internal.util.FloatingEffectHelper; import miuix.core.util.MiuixUIUtils
 
 class NativeScreen : SettingsPreferenceFragment() {
     private var target: String? = null
+    private var restartActionBar: ActionBar? = null
+    private var restartButton: ImageView? = null
+    private var restartTransition: ActionBarTransitionListener? = null
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun onResume() {
+        super.onResume()
         val page = target ?: return
-        if (!canRestart(page) || menu.findItem(RESTART_ITEM) != null) return
-        val context = preferenceManager.context
+        if (!canRestart(page)) return
+        val host = activity as? AppCompatActivity ?: return
+        val actionBar = host.getAppCompatActionBar() ?: return
+        if (restartActionBar === actionBar && restartButton != null) return
         val action = when (page) {
             FRAMEWORK -> R.string.hc_reboot
             SYSTEM_UI -> R.string.hc_restart
             else -> R.string.hc_stop
         }
-        val label = if (page == FRAMEWORK) Strings.get(context, action)
-            else "${Strings.get(context, action)} ${preferenceScreen?.title}"
-        val item = menu.add(Menu.NONE, RESTART_ITEM, Menu.NONE, label)
-        item.setOnMenuItemClickListener {
-            Restart.request(activity, page)
-            true
+        val label = Strings.get(host, action).let {
+            if (page == FRAMEWORK) it else "$it ${preferenceScreen?.title}"
         }
-        val resources = context.resources
-        val attr = resources.getIdentifier("actionBarRefreshIcon", "attr", SETTINGS)
-        val resolved = TypedValue()
-        val icon = if (context.theme.resolveAttribute(attr, resolved, true) && resolved.resourceId != 0)
-            resolved.resourceId else resources.getIdentifier("action_button_refresh", "drawable", SETTINGS)
-        if (icon != 0) item.setIcon(icon)
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        val button = ImageView(host).apply {
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            val refreshAttr = host.resources.getIdentifier("actionBarRefreshIcon", "attr", SETTINGS)
+            val refreshIcon = TypedValue()
+            if (refreshAttr != 0 && host.theme.resolveAttribute(refreshAttr, refreshIcon, true)
+                && refreshIcon.resourceId != 0) {
+                setImageDrawable(host.getDrawable(refreshIcon.resourceId))
+            } else {
+                setImageResource(android.R.drawable.ic_popup_sync)
+            }
+            val iconSize = host.resources.getIdentifier("miuix_theme_title_button_width", "dimen", SETTINGS)
+                .takeIf { it != 0 }?.let(host.resources::getDimensionPixelSize)
+                ?: (40 * host.resources.displayMetrics.density + 0.5f).toInt()
+            minimumWidth = iconSize
+            minimumHeight = iconSize
+            contentDescription = label
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { Restart.request(host, page) }
+        }
+        actionBar.setEndView(button)
+        restartActionBar = actionBar
+        restartButton = button
+        val transition = object : ActionBarTransitionListener {
+            override fun onActionBarMove(from: Float, to: Float) = Unit
+            override fun onActionBarResizing(state: Int, progress: Float, height: Int) = Unit
+            override fun onExpandStateChanged(state: Int) = Unit
+            override fun onOverlayMaskStateChanged(overlayMask: Boolean) {
+                FloatingEffectHelper.updateViewFloatingState(
+                    button, !overlayMask, MiuixUIUtils.isLightTheme(host), true
+                )
+            }
+        }
+        restartTransition = transition
+        actionBar.addActionBarTransitionListener(transition)
+    }
+
+    override fun onDestroyView() {
+        restartTransition?.let { restartActionBar?.removeActionBarTransitionListener(it) }
+        restartTransition = null
+        restartActionBar?.setEndView(null)
+        restartButton = null
+        restartActionBar = null
+        super.onDestroyView()
     }
 
     override fun getMetricsCategory() = 0
@@ -255,6 +293,5 @@ class NativeScreen : SettingsPreferenceFragment() {
     }
     companion object {
         const val TITLE_KEY = "title"
-        private const val RESTART_ITEM = 1212371457
     }
 }

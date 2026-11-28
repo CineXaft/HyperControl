@@ -26,6 +26,8 @@ object AppPages {
             .feature(10, R.string.hc_ui10, R.string.hc_ui21)
             .feature(12, R.string.hc_ui11, R.string.hc_ui22)
             .add(MobileTextPreference(page.context))
+        page.group(R.string.hc_lockscreen)
+            .feature(22, R.string.hc_ui12, R.string.hc_ui23)
     }
     @JvmStatic fun wechat(page: Page) {
         page.group(Strings.appLabel(page.context, WECHAT))

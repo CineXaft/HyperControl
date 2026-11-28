@@ -11,6 +11,7 @@
     <string name="hc_empty_text">留空用默认值</string>
     <string name="hc_mobile_text">自定义移动信号文本</string>
     <string name="hc_ui1">状态栏</string>
+    <string name="hc_lockscreen">锁屏</string>
     <string name="hc_ui3">后台与云控</string>
     <string name="hc_ui4">云控</string>
     <string name="hc_ui5">迅雷日志</string>
@@ -20,6 +21,7 @@
     <string name="hc_ui9">隐藏 Wi-Fi 标准</string>
     <string name="hc_ui10">Wi-Fi 下隐藏移动网络类型</string>
     <string name="hc_ui11">移动信号与 Wi-Fi 图标互换</string>
+    <string name="hc_ui12">禁用锁屏时钟折叠</string>
     <string name="hc_ui13">禁止杀应用</string>
     <string name="hc_ui14">去除云控</string>
     <string name="hc_ui15">禁用云控更新</string>
@@ -30,6 +32,7 @@
     <string name="hc_ui20">仅隐藏标准数字</string>
     <string name="hc_ui21">隐藏网络类型，保留信号格</string>
     <string name="hc_ui22">无线图标移到左侧，重启生效</string>
+    <string name="hc_ui23">通知时不折叠，重启生效</string>
     <string name="hc_ui24">阻止应用清理，可能耗电</string>
     <string name="hc_ui25">停止同步，保留已有数据</string>
     <string name="hc_ui26">停止更新，保留已有数据</string>

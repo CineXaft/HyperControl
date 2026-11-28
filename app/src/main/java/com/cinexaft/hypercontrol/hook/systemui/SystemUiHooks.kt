@@ -23,6 +23,8 @@ object SystemUiHooks {
         installFeature("signal indicators") { SignalHook.install(loader) }
         installFeature("mobile type on Wi-Fi") { MobileWifiHook.install(loader) }
         installFeature("mobile/Wi-Fi order") { SwapHook.install(loader) }
+        installFeature("MIUI classic lock screen clock") { LockscreenClockHook.installClassic(loader) }
+        installFeature("dynamic lock screen clock size") { LockscreenClockHook.installDynamicSize(loader) }
         installFeature("media island") {
             val mediaData = loader.loadClass("com.android.systemui.media.controls.shared.model.MediaData")
             val listeners = arrayOf("MiuiIslandMediaController", "MiuiIslandMediaControllerImpl").mapNotNull { controller ->

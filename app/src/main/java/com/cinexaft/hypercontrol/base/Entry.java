@@ -145,13 +145,13 @@ public final class Entry extends XposedModule {
             "hide_wifi_activity", "hide_wifi_standard", "hide_mobile_type_on_wifi", null, // 8–11
             "swap_mobile_wifi", "xms_auth_unlock", null, null, null, // 12–16
             "wechat_pad", "wechat_auto_select_original", null, // 17–19
-            "wechat_disable_typing_status", "wechat_hide_sns_ads" // 20–21
+            "wechat_disable_typing_status", "wechat_hide_sns_ads", "lockscreen_clock_no_collapse" // 20–22
         };
         private static volatile boolean[] flags;
         private static volatile String mobileText;
         public static void bind(Context context, String pkg) {
             int[] features = switch (pkg) {
-                case SYSTEM_UI -> new int[]{0, 7, 8, 9, 10, 12};
+                case SYSTEM_UI -> new int[]{0, 7, 8, 9, 10, 12, 22};
                 case POWER -> new int[]{3, 4};
                 case HTML -> new int[]{5};
                 case DOWNLOADS -> new int[]{6};

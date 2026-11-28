@@ -13,8 +13,8 @@ android {
         ndk { abiFilters += "arm64-v8a" }
         // Note: SDK 37 not yet available; using 35 for now
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
     }
 
     buildTypes {
