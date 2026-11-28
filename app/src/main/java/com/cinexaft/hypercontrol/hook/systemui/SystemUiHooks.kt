@@ -1,6 +1,11 @@
 package com.cinexaft.hypercontrol.hook.systemui
 
-import android.util.Log; import android.view.View; import com.cinexaft.hypercontrol.base.Entry.Bindings; import com.cinexaft.hypercontrol.base.Entry.State
+import android.util.Log
+import android.view.View
+import com.cinexaft.hypercontrol.base.Entry.Bindings
+import com.cinexaft.hypercontrol.base.Entry.Hooks
+import com.cinexaft.hypercontrol.base.Entry.State
+import com.cinexaft.hypercontrol.base.SettingsHook.Reflect
 
 object SystemUiHooks {
     @JvmStatic
@@ -12,24 +17,40 @@ object SystemUiHooks {
         }
         return id
     }
+
     @JvmStatic
     fun install(loader: ClassLoader) {
         installFeature("signal indicators") { SignalHook.install(loader) }
         installFeature("mobile type on Wi-Fi") { MobileWifiHook.install(loader) }
         installFeature("mobile/Wi-Fi order") { SwapHook.install(loader) }
         installFeature("media island") {
-            Bindings.hook(loader, "com.android.systemui.statusbar.notification.mediaisland.MiuiIslandMediaControllerImpl\$mediaDataChangeListener\$1",
-                "onMediaDataChanged", Void.TYPE, Bindings.override(0, null),
-                loader.loadClass("com.android.systemui.media.controls.shared.model.MediaData"))
+            val mediaData = loader.loadClass("com.android.systemui.media.controls.shared.model.MediaData")
+            val listeners = arrayOf("MiuiIslandMediaController", "MiuiIslandMediaControllerImpl").mapNotNull { controller ->
+                Hooks.bySignature(loader,
+                    "com.android.systemui.statusbar.notification.mediaisland.$controller\$mediaDataChangeListener\$1",
+                    "onMediaDataChanged", arrayOf(mediaData), Void.TYPE)
+            }
+            if (listeners.isEmpty()) Log.w("HyperControl.SystemUI", "Media island callback not found")
+            val hooker = Bindings.override(0, null)
+            listeners.forEach { Reflect.hook(it, hooker) }
         }
         installFeature("mobile type text") {
-            Bindings.hook(loader, "com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MiuiMobileIconInteractorImpl",
-                "getMobileTypeName", String::class.java, { chain ->
-                    val text = State.customMobileText()
-                    text ?: chain.proceed()
-                }, Int::class.javaPrimitiveType!!)
+            val owner = "com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MiuiMobileIconInteractorImpl"
+            val intType = Int::class.javaPrimitiveType!!
+            val signatures = arrayOf(
+                arrayOf<Class<*>>(intType),
+                arrayOf<Class<*>>(intType, Array<String>::class.java)
+            )
+            val methods = signatures.mapNotNull { params ->
+                Hooks.bySignature(loader, owner, "getMobileTypeName", params, String::class.java)
+            }
+            if (methods.isEmpty()) Log.w("HyperControl.SystemUI", "mobile type text signature not found")
+            methods.forEach { method ->
+                Hooks.install(method) { chain -> State.customMobileText() ?: chain.proceed() }
+            }
         }
     }
+
     private inline fun installFeature(feature: String, block: () -> Unit) {
         try {
             block()

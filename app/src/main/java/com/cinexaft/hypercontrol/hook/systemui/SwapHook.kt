@@ -1,6 +1,10 @@
 package com.cinexaft.hypercontrol.hook.systemui
 
-import android.util.Log; import android.view.View; import android.view.ViewGroup; import com.cinexaft.hypercontrol.base.Entry.Hooks; import com.cinexaft.hypercontrol.base.Entry.State; import com.cinexaft.hypercontrol.base.SettingsHook.Reflect
+import android.util.Log
+import android.view.ViewGroup
+import com.cinexaft.hypercontrol.base.Entry.Hooks
+import com.cinexaft.hypercontrol.base.Entry.State
+import com.cinexaft.hypercontrol.base.SettingsHook.Reflect
 import io.github.libxposed.api.XposedInterface
 
 class SwapHook : XposedInterface.Hooker {
@@ -14,12 +18,14 @@ class SwapHook : XposedInterface.Hooker {
         }
         return result
     }
+
     companion object {
         private const val CONTAINER = "com.android.systemui.statusbar.views.MiuiStatusIconContainer"
         private const val WIFI = "wifi_combo"
         private const val MOBILE = "mobile_combo"
         private val ids = IntArray(2)
         private var container: Class<*>? = null
+
         @JvmStatic
         fun install(classLoader: ClassLoader) {
             try { container = classLoader.loadClass(CONTAINER) }
@@ -29,25 +35,23 @@ class SwapHook : XposedInterface.Hooker {
             }
             Hooks.install(Hooks.byNameCount(container!!, "onViewAdded", 1), SwapHook())
         }
+
         private fun order(parent: ViewGroup) {
             val wifiId = SystemUiHooks.id(parent, WIFI, ids, 0)
             val mobileId = SystemUiHooks.id(parent, MOBILE, ids, 1)
             if (wifiId <= 0 || mobileId <= 0) return
             var wifi = -1
-            var mobile = -1
+            var firstMobile = -1
             for (i in 0 until parent.childCount) {
                 val id = parent.getChildAt(i).id
                 if (wifi < 0 && id == wifiId) wifi = i
-                if (mobile < 0 && id == mobileId) mobile = i
-                if (wifi >= 0 && mobile >= 0) break
+                if (firstMobile < 0 && id == mobileId) firstMobile = i
+                if (wifi >= 0 && firstMobile >= 0) break
             }
-            if (wifi < 0 || mobile < 0 || wifi < mobile) return
+            if (wifi < 0 || firstMobile < 0 || wifi < firstMobile) return
             val wifiView = parent.getChildAt(wifi)
-            val mobileView = parent.getChildAt(mobile)
-            parent.removeView(wifiView)
-            parent.removeView(mobileView)
-            parent.addView(wifiView, mobile)
-            parent.addView(mobileView, wifi)
+            parent.removeViewAt(wifi)
+            parent.addView(wifiView, firstMobile)
             Log.i(Hooks.TAG, "swapped wifi and mobile icons")
         }
     }
